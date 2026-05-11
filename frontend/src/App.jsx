@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Auth from './pages/auth';
 import Enter from './pages/enter'; 
 import Dashboard from './pages/Dashboard';
+import Transactions from './pages/Transactions';
 
 const PlaceholderPage = ({title}) => (
   <div style={{padding: '40px', textAlign: 'center'}}>
@@ -17,7 +18,7 @@ function App() {
       <Route path="/auth" element={<Auth />} />
       <Route path="/enter" element={<Enter />} />
       <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/transactions" element={<PlaceholderPage title="Транзакции" />} />
+      <Route path="/transactions" element={<Transactions />} />
       <Route path="/budgets" element={<PlaceholderPage title="Бюджеты" />} />
       <Route path="/categories" element={<PlaceholderPage title="Категории" />} />
       <Route path="/analytics" element={<PlaceholderPage title="Аналитика" />} />
