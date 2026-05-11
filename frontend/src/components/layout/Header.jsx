@@ -31,16 +31,16 @@ const Header = () => {
                 <Link to="/transactions" className={`nav-item ${isActive('/transactions') ? 'active' : ''}`}>
                     Транзакции
                 </Link>
-                <Link to="/transactions" className={`nav-item ${isActive('/budgets') ? 'active' : ''}`}>
+                <Link to="/budgets" className={`nav-item ${isActive('/budgets') ? 'active' : ''}`}>
                     Бюджеты
                 </Link>
-                <Link to="/transactions" className={`nav-item ${isActive('/categories') ? 'active' : ''}`}>
+                <Link to="/categories" className={`nav-item ${isActive('/categories') ? 'active' : ''}`}>
                     Категории
                 </Link>
-                <Link to="/transactions" className={`nav-item ${isActive('/analytics') ? 'active' : ''}`}>
+                <Link to="/analytics" className={`nav-item ${isActive('/analytics') ? 'active' : ''}`}>
                     Аналитика
                 </Link>
-                <Link to="/transactions" className={`nav-item ${isActive('/profile') ? 'active' : ''}`}>
+                <Link to="/profile" className={`nav-item ${isActive('/profile') ? 'active' : ''}`}>
                     Профиль
                 </Link>
                 <button onClick={handleLogout} className='nav-item nav-logout'>

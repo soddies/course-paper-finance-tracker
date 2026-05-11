@@ -1,12 +1,16 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/layout/Header';
 import BalanceCard from '../components/dashboard/BalanceCard';
 import StatsCards from '../components/dashboard/StatsCard';
+import TransactionModal from '../components/transaction/TransactionModal';
 import '../assets/styles/dashboard.css';
 
 const Dashboard = () => {
     const navigate = useNavigate();
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalType, setModalType] = useState('income');
 
     useEffect(() => {
         const user = localStorage.getItem('user');
@@ -21,6 +25,16 @@ const Dashboard = () => {
     };
 
     const user = getUser();
+
+    const openIncomeModal = () => {
+        setModalType('income');
+        setIsModalOpen(true);
+    };
+
+    const openExpenseModal = () => {
+        setModalType('expense');
+        setIsModalOpen(true);
+    };
 
     const todayData = {
         income: 0,
@@ -65,6 +79,8 @@ const Dashboard = () => {
                     balance={totalBalance}
                     income={monthData.income}
                     expense={monthData.expense}
+                    onAddIncome={openIncomeModal}
+                    onAddExpense={openExpenseModal}
                 />
 
                 <StatsCards
@@ -73,6 +89,12 @@ const Dashboard = () => {
                     monthData={monthData}
                 />
             </main>
+
+            <TransactionModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                type={modalType}
+            />
         </div>
     );
 };

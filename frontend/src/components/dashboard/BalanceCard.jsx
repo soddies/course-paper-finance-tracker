@@ -1,6 +1,6 @@
 import React from 'react';
 
-const BalanceCard = ({balance = 0, income=0, expense = 0}) => {
+const BalanceCard = ({balance = 0, income=0, expense = 0, onAddExpense, onAddIncome}) => {
     return (
         <div className="balance-card">
             <div className="balance-header">Текущий баланс</div>
@@ -18,10 +18,10 @@ const BalanceCard = ({balance = 0, income=0, expense = 0}) => {
             </div>
 
             <div className="balance-actions">
-                <button className="action-btn btn-income">
+                <button className="action-btn btn-income" onClick={onAddIncome}>
                     <span>+</span> Доход
                 </button>
-                <button className="action-btn btn-expense">
+                <button className="action-btn btn-expense" onClick={onAddExpense}>
                     <span>-</span> Расход
                 </button>
             </div>
