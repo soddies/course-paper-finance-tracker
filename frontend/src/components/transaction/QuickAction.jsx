@@ -14,21 +14,21 @@ const ActionCard = ({icon, title, description, onClick}) => (
     </div>
 );
 
-const QuickActions = () => {
+const QuickActions = ({onAddIncome, onAddExpense}) => {
     return (
         <div className="quick-actions">
             <ActionCard 
                 icon='icon-income'
                 title="Добавить доход"
                 description="Новая операция пополнения"
-                onClick={() => console.log("Добавить доход")}
+                onClick={onAddIncome}
             /> 
 
             <ActionCard 
                 icon='icon-expense'
                 title="Добавить расход"
                 description="Новая операция траты"
-                onClick={() => console.log("Добавить расход")}
+                onClick={onAddExpense}
             />
         </div>
     );
