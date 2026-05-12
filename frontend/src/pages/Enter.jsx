@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import InputField from '../components/ui/InputField';
 import Button from '../components/ui/Button';
 import '../assets/styles/auth.css';
 
 const Enter = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     
     const [formData, setFormData] = useState({
         email: '',
@@ -13,6 +14,13 @@ const Enter = () => {
     });
 
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (location.state?.email) {
+            setFormData(prev => ({...prev, email: location.state.email}));
+        }
+    }, [location.state]);
 
     const handleChange = (e) => {
         setFormData({
@@ -21,24 +29,41 @@ const Enter = () => {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
         
         if (!formData.email || !formData.password) {
             setError('Заполните все поля');
             return;
         }
 
-        console.log('Вход выполнен:', formData);
+        setLoading(true);
         
-        const user = {
-            id: Date.now(),
-            email: formData.email,
-            name: formData.email.split('@')[0]
-        };
-        localStorage.setItem('user', JSON.stringify(user));
-        
-        navigate('/dashboard');
+        try {
+            const response = await fetch('http://localhost:3000/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Ошибка входа');
+            }
+
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('user', JSON.stringify(data.user));
+
+            navigate('/dashboard');
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (

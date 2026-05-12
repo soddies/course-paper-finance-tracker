@@ -15,6 +15,7 @@ const Auth = () => {
     });
 
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
         setFormData({
@@ -23,8 +24,9 @@ const Auth = () => {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
         
         if (formData.password !== formData.confirmPassword) {
             setError('Пароли не совпадают');
@@ -36,9 +38,32 @@ const Auth = () => {
             return;
         }
 
-        console.log('Регистрация успешна!', formData);
-        // navigate('/dashboard'); 
-        alert('Регистрация прошла успешно! (Пока без бэкенда)');
+        setLoading(true);
+
+        try {
+            const response = await fetch('http://localhost:3000/api/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: formData.email,
+                    password: formData.password
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Ошибка регистрации');
+            }
+
+            navigate('/enter', {state: {email: formData.email}});
+        } catch(err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
