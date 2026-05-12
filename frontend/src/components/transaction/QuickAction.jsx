@@ -1,6 +1,6 @@
 import React from 'react'
-import plusIcon from '../../assets/images/plus.svg';
-import minusIcon from '../../assets/images/minus.svg';
+import plusIcon from '../../assets/images/transaction_icon/plus.svg';
+import minusIcon from '../../assets/images/transaction_icon/minus.svg';
 
 const ActionCard = ({icon, title, description, onClick}) => (
     <div className="action-card" onClick={onClick}>

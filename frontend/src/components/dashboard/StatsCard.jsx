@@ -1,7 +1,7 @@
 import React from 'react';
-import calendarIcon from '../../assets/images/calender.svg';
-import diagramIcon from '../../assets/images/diagram.svg';
-import graphicIcon from '../../assets/images/diagram2.svg';
+import calendarIcon from '../../assets/images/dashboard_icon/calender.svg';
+import diagramIcon from '../../assets/images/dashboard_icon/diagram.svg';
+import graphicIcon from '../../assets/images/dashboard_icon/diagram2.svg';
 
 const StatCard = ({icon, title, period, income, expense, balance, count}) => {
     return (

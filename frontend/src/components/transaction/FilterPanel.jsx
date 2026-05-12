@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import searchIcon from '../../assets/images/search.svg'
+import searchIcon from '../../assets/images/transaction_icon/search.svg'
 
 const FilterPanel = () => {
     const [filters, setFilters] = useState({

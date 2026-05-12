@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import exportIcon from '../../assets/images/export.svg'
-import csvIcon from '../../assets/images/file-csv.svg'
-import pdfIcon from '../../assets/images/file-pdf.svg'    
+import exportIcon from '../../assets/images/transaction_icon/export.svg'
+import csvIcon from '../../assets/images/transaction_icon/file-csv.svg'
+import pdfIcon from '../../assets/images/transaction_icon/file-pdf.svg'    
 
 const TransactionHeader = () => {
     const [isOpen, setOpen] = useState(false);

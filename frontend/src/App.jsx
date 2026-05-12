@@ -19,7 +19,6 @@ function App() {
       <Route path="/enter" element={<Enter />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/transactions" element={<Transactions />} />
-      <Route path="/budgets" element={<PlaceholderPage title="Бюджеты" />} />
       <Route path="/categories" element={<PlaceholderPage title="Категории" />} />
       <Route path="/analytics" element={<PlaceholderPage title="Аналитика" />} />
       <Route path="/profile" element={<PlaceholderPage title="Профиль" />} />

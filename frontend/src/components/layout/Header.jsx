@@ -31,9 +31,6 @@ const Header = () => {
                 <Link to="/transactions" className={`nav-item ${isActive('/transactions') ? 'active' : ''}`}>
                     Транзакции
                 </Link>
-                <Link to="/budgets" className={`nav-item ${isActive('/budgets') ? 'active' : ''}`}>
-                    Бюджеты
-                </Link>
                 <Link to="/categories" className={`nav-item ${isActive('/categories') ? 'active' : ''}`}>
                     Категории
                 </Link>
