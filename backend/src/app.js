@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const authRouter = require('./routers/authRoutes')
+const transactionRoutes = require('./routers/transactionRoutes');
 require('dotenv').config();
 
 const app = express();
@@ -10,6 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/auth', authRouter);
+app.use('/api/transactions', transactionRoutes);
 
 app.get('/health', (req, res) => {
     res.json({status: 'OK'});

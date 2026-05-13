@@ -8,6 +8,9 @@ const TransactionModal = ({isOpen, onClose, type}) => {
         description: ''
     });
 
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+
     useEffect(() => {
         const handleEsc = (e) => {
             if (e.key === 'Escape') onClose();
@@ -18,11 +21,57 @@ const TransactionModal = ({isOpen, onClose, type}) => {
 
     if (!isOpen) return null;
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // пока заглушка, потом сделаю логику сохранения и добавления в список транзакций
-        console.log(`Новая транзакция (${type}): `, formData);
-        onClose();
+        setError('');
+        setLoading(true);
+
+        try {
+            const token = localStorage.getItem('token');
+
+            if (!token) {
+                throw new Error('Вы не авторизованы. Попробуйте войти снова');
+            }
+
+            let categoryId = null;
+
+            if (formData.category && !isNaN(formData.category)) {
+                categoryId = parseInt(formData.category);
+            }
+
+            const payload = {
+                type: type,
+                amount: parseFloat(formData.amount),
+                categoryId: categoryId,
+                description: formData.description,
+                transactionDate: formData.date
+            };
+
+            const response = await fetch('http://localhost:3000/api/transactions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+
+            setFormData({
+                category: '',
+                amount: '',
+                date: new Date().toISOString().slice(0, 16),
+                description: ''
+            });
+            onClose();
+            
+        } catch (err) {
+            console.error(err);
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleChange = (e) => {
@@ -39,6 +88,8 @@ const TransactionModal = ({isOpen, onClose, type}) => {
                     </h2>
                     <button className="modal-close-btn" onClick={onClose}>✕</button>
                 </div>
+
+                {error && <div style={{color: 'red', marginBottom: '15px'}}>{error}</div>}
 
                 <form onSubmit={handleSubmit}>
                     <div className="transaction-form-group">
@@ -96,9 +147,11 @@ const TransactionModal = ({isOpen, onClose, type}) => {
                         <span className='hint-text'>Необязательно</span>
                     </div>  
 
-                    <div className="modal-action">
-                        <button type="submit" className='btn-submit'>Добавить транзакцию</button>
-                        <button type="button" className='btn-cancel' onClick={onClose}>Отмена</button>
+                    <div className="modal-action" style={{display: 'flex', gap: '10px', marginTop: '20px'}}>
+                        <button type="submit" className='btn-submit' disabled={loading} style={{opacity: loading ? 0.7 : 1}}>
+                            {loading ? "Сохранение..." : "Добавить транзакцию"}
+                        </button>
+                        <button type="button" className='btn-cancel' onClick={onClose} disabled={loading}>Отмена</button>
                     </div>
                 </form>
             </div>
