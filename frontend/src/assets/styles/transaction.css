@@ -170,10 +170,10 @@
     margin-top: 20px;
 }
 
-.btn-primary {
+.btn-primary-filter {
     flex: 1;
     padding: 12px;
-    background: #11212D;
+    background: #223a4d;
     color: white;
     border: none;
     border-radius: 8px;
@@ -182,14 +182,14 @@
     transition: background 0.2s;
 }
 
-.btn-primary:hover {
+.btn-primary-filter:hover {
     background: #06141B; 
 }
 
-.btn-secondary {
+.btn-secondary-filter {
     flex: 1;
     padding: 12px;
-    background: #9BA8AB;
+    background: #abb0b1;
     color: white;
     border: none;
     border-radius: 8px;
@@ -198,7 +198,7 @@
     transition: background 0.2s;
 }
 
-.btn-secondary:hover {
+.btn-secondary-filter:hover {
     background: #8a989b;
 }
 
@@ -356,7 +356,7 @@
 
 .btn-submit {
     flex: 1;
-    padding: 14px;
+    padding: 13px 6px;
     background: #11212D;
     color: white;
     border: none;
@@ -372,7 +372,7 @@
 
 .btn-cancel {
     flex: 1;
-    padding: 14px;
+    padding: 13px 6px;
     background: #CCD0CF;
     color: #11212D;
     border: none;
@@ -384,6 +384,182 @@
 
 .btn-cancel:hover {
     background: #b0b5b4;
+}
+
+.transaction-list-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(6, 20, 27, 0.05);
+    overflow: hidden;
+}
+
+.transaction-item {
+    display: flex;
+    align-items: center;
+    padding: 18px 24px;
+    border-bottom: 1px solid #f0f4f8;
+    transition: background 0.2s;
+    cursor: pointer;
+}
+
+.transaction-item:hover {
+    background: #f8fafc;
+}
+
+.transaction-item:hover .action-buttons {
+    opacity: 1;
+}
+
+.transaction-item:last-child {
+    border-bottom: none;
+}
+
+.cat-icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    flex-shrink: 0;
+}
+
+.cat-icon-box img {
+    width: 24px;
+    height: 24px;
+    display: block;
+}
+
+.icon-income {
+    background: #eef2f5;
+    color: #4A5C6A;
+}
+
+.icon-expense {
+    background: #eef2f5;
+    color: #253745;
+}
+
+.trans-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.trans-title {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #11212D;
+}
+
+.trans-date {
+    margin: 0;
+    font-size: 13px;
+    color: #9BA8AB;
+}
+
+.trans-desc {
+    margin: 4px 0 0 0;
+    font-size: 13px;
+    color: #4A5C6A;
+    font-style: italic;
+}
+
+.trans-amount {
+    font-size: 18px;
+    font-weight: 700;
+    margin-left: auto;
+    margin-right: 20px;
+    white-space: nowrap;
+}
+
+.amount-income {
+    color: #11212D;
+}
+
+.amount-expense {
+    color: #06141B;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.btn-icon-action {
+    background: none;
+    border: 1px solid #CCD0CF;
+    border-radius: 6px;
+    padding: 6px;
+    cursor: pointer;
+    color: #4A5C6A;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-icon-action:hover {
+    background: #4A5C6A;
+    color: white;
+    border-color: #4A5C6A;
+}
+
+.btn-icon-img {
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+    filter: invert(0);
+}
+
+.btn-icon-action:hover .btn-icon-img {
+    filter: invert(1);
+}
+
+.btn-delete:hover {
+    background: #253745;
+    border-color: #253745;
+}
+
+.transactions-loading {
+    text-align: center;
+    padding: 40px;
+    color: #9BA8AB;
+    background: white;
+    border-radius: 12px;
+}
+
+
+.transactions-error {
+    text-align: center;
+    padding: 40px;
+    color: #e74c3c; 
+    background: #ffebee;
+    border-radius: 12px;
+}
+
+.transactions-empty {
+    text-align: center;
+    padding: 60px 40px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.transactions-empty h3 {
+    margin: 0 0 10px 0;
+    color: #11212D;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.transactions-empty p {
+    margin: 0;
+    color: #9BA8AB;
+    font-size: 14px;
 }
 
 @media (max-width: 768px) {

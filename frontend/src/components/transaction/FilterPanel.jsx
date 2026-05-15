@@ -133,8 +133,8 @@ const FilterPanel = () => {
             </div>
 
             <div className="filter-actions">
-                <button className="btn-primary" onClick={handleApply}>Применить фильтры</button>
-                <button className="btn-secondary" onClick={handleReset}>Сбросить фильтры</button>
+                <button className="btn-primary-filter" onClick={handleApply}>Применить фильтры</button>
+                <button className="btn-secondary-filter" onClick={handleReset}>Сбросить фильтры</button>
             </div>
         </div>
     );

@@ -11,7 +11,7 @@ const createTransaction = async (userId, type, amount, categoryId, description, 
 };
 
 const getUserTransactions = async (userId, filters = {}) => {
-    let query = 'select t.*, c.name as category_name, c.icon_name as category_icon from transactions t left join categories c on t.category_id = c.id where t.user_id = $1';
+    let query = 'select t.*, c.name as category_name, c.icon as category_icon from transactions t left join categories c on t.category_id = c.id where t.user_id = $1';
     const params = [userId];
     let paramCount = 1;
 
@@ -41,7 +41,6 @@ const getUserTransactions = async (userId, filters = {}) => {
 
     query += ` order by t.transaction_date desc`;
 
-    // опциональная пагинация
     if (filters.limit) {
         paramCount++;
         query += ` limit $${paramCount}`;

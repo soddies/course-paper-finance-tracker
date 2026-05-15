@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react'
 
-const TransactionModal = ({isOpen, onClose, type}) => {
+const TransactionModal = ({isOpen, onClose, type, transaction, onTransactionUpdate}) => {
+    const isEditing = !!transaction;
+
     const [formData, setFormData] = useState({
         category: '',
         amount: '',
@@ -8,8 +10,56 @@ const TransactionModal = ({isOpen, onClose, type}) => {
         description: ''
     });
 
+    const [categories, setCategories] = useState([]);
+    const [loadingCategories, setLoadingCategories] = useState(true);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const fetchCategories = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) return;
+
+                const response = await fetch(`http://localhost:3000/api/categories?type=${type}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    setCategories(data.categories || []);
+                }
+            } catch (err) {
+                console.error('Ошибка загрузки категорий: ', err);
+            } finally {
+                setLoadingCategories(false);
+            }
+        };
+
+        fetchCategories();
+    }, [isOpen, type]);
+
+    useEffect(() => {
+        if (isEditing && transaction) {
+            setFormData({
+                category: transaction.category_id || '',
+                amount: transaction.amount || '',
+                date: transaction.transaction_date ? new Date(transaction.transaction_date).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16),
+                description: transaction.description || ''
+            });
+        } else if (!isEditing) {
+            setFormData({
+                category: '',
+                amount: '',
+                date: new Date().toISOString().slice(0, 16),
+                description: ''
+            });
+        }
+    }, [isEditing, transaction, isOpen]);
 
     useEffect(() => {
         const handleEsc = (e) => {
@@ -28,27 +78,28 @@ const TransactionModal = ({isOpen, onClose, type}) => {
 
         try {
             const token = localStorage.getItem('token');
-
             if (!token) {
-                throw new Error('Вы не авторизованы. Попробуйте войти снова');
-            }
-
-            let categoryId = null;
-
-            if (formData.category && !isNaN(formData.category)) {
-                categoryId = parseInt(formData.category);
+                throw new Error('Вы не авторизованы');
             }
 
             const payload = {
                 type: type,
                 amount: parseFloat(formData.amount),
-                categoryId: categoryId,
+                categoryId: formData.category ? parseInt(formData.category) : null,
                 description: formData.description,
                 transactionDate: formData.date
             };
 
-            const response = await fetch('http://localhost:3000/api/transactions', {
-                method: 'POST',
+            let url = 'http://localhost:3000/api/transactions';
+            let method = 'POST';
+
+            if (isEditing) {
+                url = `http://localhost:3000/api/transactions/${transaction.id}`;
+                method = 'PUT';
+            }
+
+            const response = await fetch(url, {
+                method,
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
@@ -58,14 +109,15 @@ const TransactionModal = ({isOpen, onClose, type}) => {
 
             const data = await response.json();
 
-            setFormData({
-                category: '',
-                amount: '',
-                date: new Date().toISOString().slice(0, 16),
-                description: ''
-            });
+            if (!response.ok) {
+                throw new Error(data.error || 'Ошибка');
+            }
+
+            if (onTransactionUpdate) {
+                onTransactionUpdate();
+            }
+
             onClose();
-            
         } catch (err) {
             console.error(err);
             setError(err.message);
@@ -84,29 +136,33 @@ const TransactionModal = ({isOpen, onClose, type}) => {
             <div className="modal-content" onClick={e => e.stopPropagation()}>
                 <div className="modal-header">
                     <h2 className='modal-title'>
-                        {type === 'income' ? 'Добавить доход' : 'Добавить расход'}
+                        {isEditing ? `Редактировать ${type === 'income' ? 'доход' : 'расход'}` 
+                        : `Добавить ${type === 'income' ? 'доход' : 'расход'} `}
                     </h2>
                     <button className="modal-close-btn" onClick={onClose}>✕</button>
                 </div>
 
-                {error && <div style={{color: 'red', marginBottom: '15px'}}>{error}</div>}
+                {error && <div style={{color: '#0b0e14', marginBottom: '15px'}}>{error}</div>}
 
                 <form onSubmit={handleSubmit}>
                     <div className="transaction-form-group">
                         <label className="transaction-label">Категория *</label>
-                        <select 
-                            name="category"
-                            value={formData.category}
-                            onChange={handleChange}
-                            className='transaction-select'
-                            required
-                        >
-                            <option value="" disabled>Выберите категорию</option>
-                            <option value="salary">Зарплата</option>
-                            <option value="freelance">Фриланс</option>
-                            <option value="food">Еда</option>
-                            <option value="transport">Транспорт</option>
-                        </select>
+                        {loadingCategories ? (
+                            <p style={{color: '#999'}}>Загрузка категорий...</p>
+                        ) : (
+                            <select 
+                                name="category"
+                                value={formData.category}
+                                onChange={handleChange}
+                                className='transaction-select'
+                                required
+                            >
+                                <option value="" disabled>Выберите категорию</option>
+                                {categories.map(cat => (
+                                    <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                ))}
+                            </select>
+                        )}
                     </div>
 
                     <div className="transaction-form-group">
@@ -141,15 +197,15 @@ const TransactionModal = ({isOpen, onClose, type}) => {
                             name="description"
                             value={formData.description}
                             onChange={handleChange}
-                            placeholder='Например: обед в спаре...'
+                            placeholder='Например: чаевые или обед в спаре...'
                             className="transaction-textarea" 
                         ></textarea>
                         <span className='hint-text'>Необязательно</span>
                     </div>  
 
                     <div className="modal-action" style={{display: 'flex', gap: '10px', marginTop: '20px'}}>
-                        <button type="submit" className='btn-submit' disabled={loading} style={{opacity: loading ? 0.7 : 1}}>
-                            {loading ? "Сохранение..." : "Добавить транзакцию"}
+                        <button type="submit" className='btn-submit' disabled={loading || loadingCategories} style={{opacity: (loading || loadingCategories) ? 0.7 : 1}}>
+                            {loading ? "Сохранение..." : (isEditing ? 'Обновить' : 'Добавить транзакцию')}
                         </button>
                         <button type="button" className='btn-cancel' onClick={onClose} disabled={loading}>Отмена</button>
                     </div>

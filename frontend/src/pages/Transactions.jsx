@@ -1,14 +1,17 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import Header from '../components/layout/Header';
 import TransactionHeader from '../components/transaction/TransactionsHeader';
 import QuickActions from '../components/transaction/QuickAction';
 import FilterPanel from '../components/transaction/FilterPanel';
 import TransactionModal from '../components/transaction/TransactionModal';
+import TransactionList from '../components/transaction/TransactionList';
 import '../assets/styles/transaction.css';
 
 const Transactions = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalType, setModalType] = useState('income');
+    const [filters, setFilters] = useState({});
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
     
     const openIncomeModal = () => {
         setModalType('income');
@@ -18,7 +21,13 @@ const Transactions = () => {
     const openExpenseModal = () => {
         setModalType('expense');
         setIsModalOpen(true);
-    }
+    };
+
+    const handleTransactionAdded = () => {
+        setRefreshTrigger(prev => prev + 1);
+        setIsModalOpen(false);
+    };
+
     return (
         <div className="transactions-page">
             <Header/>
@@ -32,17 +41,12 @@ const Transactions = () => {
                     onAddIncome={openIncomeModal}
                     onAddExpense={openExpenseModal}
                 />
-                <FilterPanel />
-                {/*Здесь будет таблица транзакций*/}
-                <div style={{
-                    marginTop: '30px',
-                    textAlign: 'center',
-                    padding: '40px',
-                    background: 'white',
-                    borderRadius: '12px',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
-                }}>
-                    <p style={{ color: '#7f8c8d'}}>Список транзакций появится здесь</p>
+                <FilterPanel onFilterChange={setFilters}/>
+                <div style={{ marginTop: '30px' }}>
+                    <TransactionList
+                        filters={filters}
+                        refreshTrigger={refreshTrigger}
+                    />
                 </div>
             </main>
 
@@ -50,6 +54,7 @@ const Transactions = () => {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 type={modalType}
+                onTransactionUpdate={handleTransactionAdded}
             />
         </div>
     );
