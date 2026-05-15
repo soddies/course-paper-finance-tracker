@@ -3,6 +3,7 @@ import Auth from './pages/auth';
 import Enter from './pages/enter'; 
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
+import Categories from './pages/Categories';
 
 const PlaceholderPage = ({title}) => (
   <div style={{padding: '40px', textAlign: 'center'}}>
@@ -19,7 +20,7 @@ function App() {
       <Route path="/enter" element={<Enter />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/transactions" element={<Transactions />} />
-      <Route path="/categories" element={<PlaceholderPage title="Категории" />} />
+      <Route path="/categories" element={<Categories/>} />
       <Route path="/analytics" element={<PlaceholderPage title="Аналитика" />} />
       <Route path="/profile" element={<PlaceholderPage title="Профиль" />} />
     </Routes>
