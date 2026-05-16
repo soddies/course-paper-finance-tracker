@@ -88,7 +88,7 @@ const updateTransaction = async (req, res) => {
         const {type, amount, categoryId, description, transactionDate} = req.body;
 
         const transaction = await transactionService.updateTransaction(
-            perseInt(id),
+            parseInt(id),
             userId,
             {
                 type,
