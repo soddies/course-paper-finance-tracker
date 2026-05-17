@@ -7,7 +7,7 @@ router.use(authenticateToken);
 
 router.post('/', transactionController.createTransaction);
 router.get('/', transactionController.getTransactions);
-router.get('/', transactionController.getTransactions);
+router.get('/', transactionController.getTransactionById);
 router.put('/:id', transactionController.updateTransaction);
 router.delete('/:id', transactionController.deleteTransaction);
 

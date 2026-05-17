@@ -17,7 +17,7 @@ const createTransaction = async (req, res) => {
             return res.status(400).json({error: 'Сумма должна быть положительной'});
         }
 
-        const transaction = await transactionService.createTransaction(
+        const transactions = await transactionService.createTransaction(
             userId,
             type, 
             parseFloat(amount),
@@ -28,7 +28,7 @@ const createTransaction = async (req, res) => {
 
         res.status(201).json({
             message: 'Транзакция создана',
-            transaction
+            transactions
         });
     } catch (error) {
         console.error('Create transaction error: ', error);
@@ -40,22 +40,35 @@ const createTransaction = async (req, res) => {
 const getTransactions = async (req, res) => {
     try {
         const userId = req.user.userId;
-        const {type, categoryId, dateFrom, dateTo, limit, offset} = req.query;
+        const {
+            type, 
+            categoryId,
+            search, 
+            dateFrom, 
+            dateTo,
+            sortBy,
+            sortOrder, 
+            limit, 
+            offset
+        } = req.query;
 
         const filters = {
             type,
             categoryId: categoryId ? parseInt(categoryId) : undefined,
+            search,
             dateFrom,
             dateTo,
-            limit: limit ? parseInt(limit) : undefined,
-            offset: offset ? parseInt(offset) : undefined
+            sortBy: sortBy || 'date',
+            sortOrder: sortOrder || 'desc',
+            limit: limit ? parseInt(limit) : 50,
+            offset: offset ? parseInt(offset) : 0
         };
 
-        const transaction = await transactionService.getUserTransactions(userId, filters);
+        const transactions = await transactionService.getUserTransactions(userId, filters);
 
         res.status(200).json({
-            count: transaction.length,
-            transaction
+            count: transactions.length,
+            transactions
         });
     } catch (error) {
         console.error('Get transaction error: ', error);
@@ -63,12 +76,12 @@ const getTransactions = async (req, res) => {
     }
 };
 
-const getTransaction = async (req, res) => {
+const getTransactionById = async (req, res) => {
     try {
         const userId = req.user.userId;
         const {id} = req.params;
 
-        const transaction = transactionService.getTransactionsId(parseInt(id), userId);
+        const transaction = await transactionService.getTransactionsById(parseInt(id), userId);
 
         if (!transaction) {
             return res.status(404).json({error: 'Транзакция не найдена'});
@@ -132,7 +145,7 @@ const deleteTransaction = async (req, res) => {
 module.exports = {
     createTransaction,
     getTransactions,
-    getTransaction, // получение транзакции по id
+    getTransactionById, // получение транзакции по id
     updateTransaction,
     deleteTransaction
 }

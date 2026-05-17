@@ -22,11 +22,33 @@ const TransactionList = ({ filters = {}, refreshTrigger }) => {
             }
 
             const queryParams = new URLSearchParams();
-            if (filters.type) queryParams.append('type', filters.type);
-            if (filters.categoryId) queryParams.append('categoryId', filters.categoryId);
-            if (filters.dateFrom) queryParams.append('dateFrom', filters.dateFrom);
-            if (filters.dateTo) queryParams.append('dateTo', filters.dateTo);
-            if (filters.search) queryParams.append('search', filters.search);
+            if (filters.type && filters.type !== 'all') {
+                queryParams.append('type', filters.type);
+            }
+            
+            if (filters.categoryId && filters.categoryId !== 'all') {
+                queryParams.append('categoryId', filters.categoryId);
+            } 
+
+            if (filters.search) {
+                queryParams.append('search', filters.search);
+            }
+
+            if (filters.dateFrom) {
+                queryParams.append('dateFrom', filters.dateFrom);
+            }
+
+            if (filters.dateTo) {
+                queryParams.append('dateTo', filters.dateTo);
+            }
+
+            if (filters.sortBy) {
+                queryParams.append('sortBy', filters.sortBy);
+            }
+
+            if (filters.sortOrder) {
+                queryParams.append('sortOrder', filters.sortOrder);
+            }
 
             const response = await fetch(
                 `http://localhost:3000/api/transactions?${queryParams}`,
@@ -43,7 +65,7 @@ const TransactionList = ({ filters = {}, refreshTrigger }) => {
                 throw new Error(data.error || 'Ошибка загрузки');
             }
 
-            const transactionsArray = Array.isArray(data) ? data : (data.transaction || []);
+            const transactionsArray = Array.isArray(data) ? data : (data.transactions || []);
             setTransactions(transactionsArray);
             setError('');
         } catch (err) {

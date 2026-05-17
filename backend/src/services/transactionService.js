@@ -11,55 +11,79 @@ const createTransaction = async (userId, type, amount, categoryId, description, 
 };
 
 const getUserTransactions = async (userId, filters = {}) => {
-    let query = 'select t.*, c.name as category_name, c.icon as category_icon from transactions t left join categories c on t.category_id = c.id where t.user_id = $1';
-    const params = [userId];
-    let paramCount = 1;
 
-    if (filters.type) {
-        paramCount++;
-        query += ` and t.type = $${paramCount}`;
-        params.push(filters.type);
+    const {
+        type,
+        categoryId,
+        search,
+        dateFrom,
+        dateTo,
+        sortBy = 'date',
+        sortOrder = 'desc',
+        limit = 50,
+        offset = 0
+    } = filters;
+
+    let query = `
+        select t.id, t.type, t.amount, t.description, t.transaction_date, t.category_id, c.name as category_name, c.icon as category_icon from transactions t
+        left join categories c on c.id = t.category_id where t.user_id = $1
+    `;
+    const queryParams = [userId];
+    let paramIndex = 2;
+
+    if (type && type !== 'all') {
+        query += ` and t.type = $${paramIndex}`;
+        queryParams.push(type);
+        paramIndex++;
     }
 
-    if (filters.categoryId) {
-        paramCount++;
-        query += ` and t.category_id = $${paramCount}`;
-        params.push(filters.categoryId);
+    if (categoryId && categoryId !== 'all') {
+        query += ` and t.category_id = $${paramIndex}`;
+        queryParams.push(categoryId);
+        paramIndex++;
     }
 
-    if (filters.dateFrom) {
-        paramCount++;
-        query += ` and t.transaction_date >= $${paramCount}`;
-        params.push(filters.dateFrom);
+    if (search && search.trim()) {
+        query += `and (t.description ilike $${paramIndex} or c.name ilike $${paramIndex})`;
+        queryParams.push(`%${search.trim()}%`);
+        paramIndex++;
     }
 
-    if (filters.dateTo) {
-        paramCount++;
-        query += ` and t.transaction_date <= $${paramCount}`;
-        params.push(filters.dateTo);
+    if (dateFrom) {
+        query += ` and t.transaction_date >= $${paramIndex}`;
+        queryParams.push(new Date(dateFrom));
+        paramIndex++;
     }
 
-    query += ` order by t.transaction_date desc`;
-
-    if (filters.limit) {
-        paramCount++;
-        query += ` limit $${paramCount}`;
-        params.push(filters.limit);
+    if (dateTo) {
+        const dateToEnd = new Date(dateTo);
+        dateToEnd.setHours(23, 59, 59, 999);
+        query += ` and t.transaction_date <= $${paramIndex}`;
+        queryParams.push(dateToEnd);
+        paramIndex++;
     }
 
-    if (filters.offset) {
-        paramCount++;
-        query += ` offset $${paramCount}`;
-        params.push(filters.offset);
-    }
+    const validSortField = {
+        'date': 't.transaction_date',
+        'amount': 't.amount',
+        'category': 'c.name'
+    };
 
-    const result = await pool.query(query, params);
+    const sortField = validSortField[sortBy] || 't.transaction_date';
+    const order = sortOrder === 'asc' ? 'asc' : 'desc';
+
+    query += ` order by ${sortField} ${order}`;
+
+    query += ` limit $${paramIndex} offset $${paramIndex + 1}`;
+    queryParams.push(parseInt(limit), parseInt(offset));
+
+    const result = await pool.query(query, queryParams);
     return result.rows;
 };
 
-const getTransactionsId = async (transactionId, userId) => {
+const getTransactionsById = async (transactionId, userId) => {
     const result = await pool.query(
-        'select * from transactions whre id = $1 and user_id = $2',
+        'select * from transactions whеre id = $1 and user_id = $2',
         [transactionId, userId]
     );
     return result.rows[0];    
@@ -92,7 +116,7 @@ const deleteTransaction = async (transactionId, userId) => {
 module.exports = {
     createTransaction,
     getUserTransactions,
-    getTransactionsId,
+    getTransactionsById,
     updateTransaction,
     deleteTransaction
 };

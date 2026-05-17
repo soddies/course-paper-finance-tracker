@@ -1,15 +1,43 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import searchIcon from '../../assets/images/transaction_icon/search.svg'
 
-const FilterPanel = () => {
+const FilterPanel = ({onFilterChange}) => {
+
+    const [categories, setCategories] = useState([]);
+
     const [filters, setFilters] = useState({
         search: '',
         type: 'all',
-        category: 'all',
+        categoryId: 'all',
         dateFrom: '',
+        dateTo: '',
         sortBy: 'date',
-        order: 'desc'
+        sortOrder: 'desc'
     });
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) return;
+
+                const response = await fetch('http://localhost:3000/api/transactions/filters/categories', {
+                    headers: {
+                        'Authorization' : `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setCategories(data.categories || []);
+                }
+            } catch (err) {
+                console.error('Ошибка загрузки категорий: ', err);
+            }
+        };
+
+        fetchCategories();
+    }, []);
 
     const handleChange = (e) => {
         const {name, value} = e.target;
@@ -17,19 +45,28 @@ const FilterPanel = () => {
     };
 
     const handleApply = () => {
-        console.log("Применены фильтры: ", filters);
-        // пока заглушка, потом напишу логику применения фильтров
+        if (onFilterChange) {
+            const cleanFilters = Object.fromEntries(
+                Object.entries(filters).filter(([_, value]) => value && value !== 'all')
+            );
+            onFilterChange(cleanFilters);
+        }
     };
 
     const handleReset = () => {
         setFilters({
             search: '',
             type: 'all',
-            category: 'all',
+            categoryId: 'all',
             dateFrom: '',
+            dateTo: '',
             sortBy: 'date',
-            order: 'desc'
+            sortOrder: 'desc'
         });
+        setFilters(defaultFilters);
+        if (onFilterChange) {
+            onFilterChange({});
+        }
     };
 
     return (
@@ -69,16 +106,15 @@ const FilterPanel = () => {
                 <div className="filter-group">
                     <label className="filter-label">Категория</label>
                     <select 
-                        name="category"
-                        value={filters.category}
+                        name="categoryId"
+                        value={filters.categoryId}
                         onChange={handleChange}
                         className='filter-select'
                     >
                         <option value="all">Все категории</option>
-                        <option value="food">Еда</option>
-                        <option value="salary">Зарплата</option>
-                        <option value="entertaiment">Развлечения</option>
-                        <option value="transport">Транспорт</option>
+                        {categories.map(cat => (
+                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                        ))}
                     </select>
                 </div>
 
@@ -121,8 +157,8 @@ const FilterPanel = () => {
                 <div className="filter-group">
                     <label className="filter-label">Порядок</label>
                     <select 
-                        name="order"
-                        value={filters.order}
+                        name="sortOrder"
+                        value={filters.sortOrder}
                         onChange={handleChange}
                         className='filter-select'
                     >

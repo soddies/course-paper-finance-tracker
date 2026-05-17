@@ -28,6 +28,11 @@ const Transactions = () => {
         setIsModalOpen(false);
     };
 
+    const handleFilterChange = (newFilters) => {
+        setFilters(newFilters);
+            setRefreshTrigger(prev => prev + 1);
+    }
+
     return (
         <div className="transactions-page">
             <Header/>
@@ -41,7 +46,7 @@ const Transactions = () => {
                     onAddIncome={openIncomeModal}
                     onAddExpense={openExpenseModal}
                 />
-                <FilterPanel onFilterChange={setFilters}/>
+                <FilterPanel onFilterChange={handleFilterChange}/>
                 <div style={{ marginTop: '30px' }}>
                     <TransactionList
                         filters={filters}
