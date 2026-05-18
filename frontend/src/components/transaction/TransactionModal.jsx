@@ -66,7 +66,7 @@ const TransactionModal = ({isOpen, onClose, type, transaction, onTransactionUpda
             if (e.key === 'Escape') onClose();
         };
         if (isOpen) window.addEventListener('keydown', handleEsc);
-        return () => window.addEventListener('keydown', handleEsc); 
+        return () => window.removeEventListener('keydown', handleEsc); 
     }, [isOpen, onClose]);
 
     if (!isOpen) return null;
@@ -87,7 +87,7 @@ const TransactionModal = ({isOpen, onClose, type, transaction, onTransactionUpda
                 amount: parseFloat(formData.amount),
                 categoryId: formData.category ? parseInt(formData.category) : null,
                 description: formData.description,
-                transactionDate: formData.date
+                transactionDate: new Date(formData.date).toISOString()
             };
 
             let url = 'http://localhost:3000/api/transactions';

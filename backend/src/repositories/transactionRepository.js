@@ -43,7 +43,7 @@ const getUserTransactions = async (userId, filters = {}) => {
     }
 
     if (search && search.trim()) {
-        query += `and (t.description ilike $${paramIndex} or c.name ilike $${paramIndex})`;
+        query += ` and (t.description ilike $${paramIndex} or c.name ilike $${paramIndex})`;
         queryParams.push(`%${search.trim()}%`);
         paramIndex++;
     }
@@ -82,7 +82,7 @@ const getUserTransactions = async (userId, filters = {}) => {
 
 const getTransactionsById = async (transactionId, userId) => {
     const result = await pool.query(
-        'select * from transactions whеre id = $1 and user_id = $2',
+        'select * from transactions where id = $1 and user_id = $2',
         [transactionId, userId]
     );
     return result.rows[0];    

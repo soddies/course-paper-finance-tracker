@@ -5,7 +5,7 @@ const FilterPanel = ({onFilterChange}) => {
 
     const [categories, setCategories] = useState([]);
 
-    const [filters, setFilters] = useState({
+    const defaultFilters = {
         search: '',
         type: 'all',
         categoryId: 'all',
@@ -13,7 +13,9 @@ const FilterPanel = ({onFilterChange}) => {
         dateTo: '',
         sortBy: 'date',
         sortOrder: 'desc'
-    });
+    }
+
+    const [filters, setFilters] = useState(defaultFilters);
 
     useEffect(() => {
         const fetchCategories = async () => {
