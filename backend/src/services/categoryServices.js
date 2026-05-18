@@ -1,66 +1,36 @@
-const pool = require('../config/database');
+const categoryRepository = require('../repositories/categoryRepository');
 
-const getCategories = async (userId, type) => {
-    let query = 'select * from categories where (is_system = true or user_id = $1)';
-    const params = [userId];
+const categoryService = {
+    async getCategories(userId, type) {
+        return await categoryRepository.getCategories(userId, type);
+    },
 
-    if (type) {
-        query += ` and type = $2`;
-        params.push(type);
+    async getCategoryStats(userId) {
+        return await categoryRepository.getCategoryStats(userId);
+    },
+
+    async createCategory(userId, name, type, icon) {
+        if (!name || name.trim() === '') {
+            throw new Error('Название категории обязательно!');
+        }
+
+        return await categoryRepository.createCategory(userId, name.trim(), type, icon);
+    },
+
+    async deleteCategory(categoryId, userId) {
+
+        const category = categoryRepository.getCategoryById(categoryId, userId);
+
+        if (!category) {
+            throw new Error('Категория не найдена');
+        }
+
+        if (category.is_system) {
+            throw new Error('Нельзя удалить системную категорию!');
+        }
+
+        return await categoryRepository.deleteCategory(categoryId);
     }
-
-    query += ' order by is_system desc, name asc';
-
-    const result = await pool.query(query, params);
-    return result.rows;
 };
 
-const getCategoryStats = async (userId) => {
-    const result = await pool.query(
-        'select * from categories where is_system = true or user_id = $1',
-        [userId]
-    );
-
-    const allCategories = result.rows;
-    const total = allCategories.length;
-    const myCount = allCategories.filter(c => !c.is_system).length;
-    const systemCount = allCategories.filter(c => c.is_system).length;
-
-    return {
-        total,
-        myCount,
-        systemCount
-    };
-};
-
-const createCategory = async (userId, name, type, icon) => {
-    const result = await pool.query(
-        'insert into categories (user_id, name, type, icon, is_system) values ($1, $2, $3, $4, false) returning *',
-        [userId, name, type, icon || null]
-    );
-    return result.rows[0];
-};
-
-const deleteCategory = async (categoryId, userId) => {
-    const check = await pool.query(
-        'select is_system from categories where id = $1 and user_id = $2',
-        [categoryId, userId]
-    );
-
-    if (check.rows.length === 0) {
-        throw new Error('Категория не найдена');
-    }
-
-    if (check.rows[0].is_system) {
-        throw new Error('Нельзя удалить системную категорию!');
-    }
-
-    await pool.query('delete from categories where id = $1', [categoryId]);
-}
-
-module.exports = {
-    getCategories,
-    createCategory,
-    deleteCategory,
-    getCategoryStats
-}
+module.exports = categoryService;
