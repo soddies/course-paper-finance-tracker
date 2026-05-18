@@ -4,6 +4,7 @@ import Enter from './pages/enter';
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
 import Categories from './pages/Categories';
+import Analytics from './pages/Analytics';
 
 const PlaceholderPage = ({title}) => (
   <div style={{padding: '40px', textAlign: 'center'}}>
@@ -21,7 +22,8 @@ function App() {
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/transactions" element={<Transactions />} />
       <Route path="/categories" element={<Categories/>} />
-      <Route path="/analytics" element={<PlaceholderPage title="Аналитика" />} />
+      <Route path="/targets" element={<PlaceholderPage title="Цели накопления" />} />
+      <Route path="/analytics" element={<Analytics />} />
       <Route path="/profile" element={<PlaceholderPage title="Профиль" />} />
     </Routes>
   );
