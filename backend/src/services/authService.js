@@ -23,7 +23,7 @@ const loginUser = async (email, password) => {
     const user = await authRepository.searchByEmail(email);
 
     if (!user) {
-        throw new Error('Неверный логин и пароль');
+        throw new Error('Неверный логин или пароль');
     }
 
     const isValidPassword = await bcrypt.compare(password, user.password_hash);
