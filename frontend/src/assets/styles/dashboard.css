@@ -235,6 +235,16 @@
     color: #95a5a6;
 }
 
+.dashboard-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    color: #9BA8AB;
+    font-size: 16px;
+}
+
 @media (max-width: 768px) {
     .header {
         padding: 0 20px;

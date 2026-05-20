@@ -12,12 +12,46 @@ const Dashboard = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalType, setModalType] = useState('income');
 
+    const [dashboardData, setDashboardData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+
     useEffect(() => {
         const user = localStorage.getItem('user');
         if (!user) {
             navigate('/enter');
         }
+
+        fetchDashboardData();
     }, [navigate]);
+
+    const fetchDashboardData = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('Нет токена авторизации');
+            }
+
+            const response = await fetch('http://localhost:3000/api/dashboard/summary', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error || 'Ошибка загрузки');
+            }
+
+            const data = await response.json();
+            setDashboardData(data);
+            setError('');
+        } catch (err) {
+            console.error('Dashboard fetch error: ', err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const getUser = () => {
         const userStr = localStorage.getItem('user');
@@ -36,28 +70,55 @@ const Dashboard = () => {
         setIsModalOpen(true);
     };
 
+    const handleTransactionAdded = () => {
+        fetchDashboardData();
+        setIsModalOpen(false);
+    };
+
+    const formattingMoney = (amount) => {
+        return new Intl.NumberFormat('ru-RU', {
+            style: 'currency',
+            currency: 'RUB',
+            minimumFractionDigits: 2,
+        }).format(amount || 0);
+    };
+
+    if (loading) {
+        return (
+            <div className="dashboard-page">
+                <Header/>
+                <div className="dashboard-loading">
+                    Загрузка данных...
+                </div>
+            </div>
+        );
+    }
+
+    const totalBalance = dashboardData?.totalBalance || 0;
+    const monthlyIncome = dashboardData?.monthlyIncome || 0;
+    const monthlyExpense = dashboardData?.monthlyExpense || 0;
+    const transactionsCount = dashboardData?.transactionCount || 0;
+
     const todayData = {
         income: 0,
         expense: 0,
         balance: 0,
         count: 0
-    };
+    }; // будет сделано отдельно
 
     const weekData = {
         income: 0,
         expense: 0,
         balance: 0,
         count: 0
-    };
+    }; // будет сделано отдельно
 
     const monthData = {
-        income: 0,
-        expense: 0,
-        balance: 0,
-        count: 0
+        income: monthlyIncome,
+        expense: monthlyExpense,
+        balance: monthlyIncome - monthlyExpense,
+        count: transactionsCount
     };
-
-    const totalBalance = monthData.income - monthData.expense;
 
     if (!user) {
         return null;
@@ -77,8 +138,8 @@ const Dashboard = () => {
 
                 <BalanceCard 
                     balance={totalBalance}
-                    income={monthData.income}
-                    expense={monthData.expense}
+                    income={monthlyIncome}
+                    expense={monthlyExpense}
                     onAddIncome={openIncomeModal}
                     onAddExpense={openExpenseModal}
                 />
@@ -94,6 +155,7 @@ const Dashboard = () => {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 type={modalType}
+                onTransactionUpdate={handleTransactionAdded}
             />
         </div>
     );
