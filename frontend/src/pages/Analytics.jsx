@@ -23,6 +23,7 @@ const Analytics = () => {
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
     const [analyticsData, setAnalyticsData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
     const months = [
         'Январь',
@@ -70,12 +71,16 @@ const Analytics = () => {
             setAnalyticsData(data);
         } catch (err) {
             console.error('Ошибка загрузки аналитики: ', err);
+            setError(err.message);
         } finally {
             setLoading(false);
         }
     };
 
     const formatCurrency = (amount) => {
+        if (amount === null || amount === undefined) {
+            return '0';
+        }
         return new Intl.NumberFormat('ru-RU', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
@@ -162,12 +167,36 @@ const Analytics = () => {
         },
     };
 
+    if (error) {
+        return (
+            <div className="analytics-page">
+                <Header />
+                <div className="analytics-error">
+                    <p>{error}</p>
+                    <button onClick={fetchAnalytics}>Повторить</button>
+                </div>
+            </div>
+        );
+    }
+
     if (loading) {
         return (
             <div className="analytics-page">
                 <Header/>
                 <div className="analytics-loading">
                     Загрузка...
+                </div>
+            </div>
+        );
+    }
+
+    if (!analyticsData || !analyticsData.dailyStats) {
+        return (
+            <div className="analytics-page">
+                <Header />
+                <div className="analytics-empty">
+                    <p>Нет данных для отображения</p>
+                    <button onClick={fetchAnalytics}>Обновить</button>
                 </div>
             </div>
         );
@@ -186,7 +215,7 @@ const Analytics = () => {
                         </p>
                     </div>
 
-                    <div className="analytics-filters">
+                    <div className="analytics-filters" style={{opacity: loading ? 0.5 : 1, pointerEvents: loading ? 'none' : 'auto'}}>
                         <div className="period-toggle">
                             <button className={`period-btn ${period === 'month' ? 'active' : ''}`} onClick={() => setPeriod('month')}>
                                 Месяц
@@ -196,7 +225,7 @@ const Analytics = () => {
                             </button>
                         </div>
 
-                        <select className='year-select' value={selectedYear} onChange={(e) => setSelectedYear(Number(e.target.value))}>
+                        <select className='year-select' value={selectedYear} onChange={(e) => setSelectedYear(Number(e.target.value))} disabled={loading}>
                             {years.map(year => (
                                 <option key={year} value={year}>{year}</option>
                             ))}
