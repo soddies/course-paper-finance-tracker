@@ -14,7 +14,7 @@ const TransactionHeader = () => {
     return (
         <div className="page-header">
             <h1 className="page-title">Транзакции</h1>
-            <div className="action-buttons">
+            <div className="header-buttons">
                 <div className="dropdown">
                     <button className="btn-action btn-export_transaction" onClick={() => setOpen(!isOpen)}>
                         <img src={exportIcon} alt="plus" className='btn-icon'/>

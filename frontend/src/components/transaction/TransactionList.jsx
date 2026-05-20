@@ -15,9 +15,7 @@ const TransactionList = ({ filters = {}, refreshTrigger, setLoading }) => {
 
     const fetchTransactions = async () => {
         try {
-            if (setLoading) {
-                setIsLoading(true);
-            }
+            setIsLoading(true);
             const token = localStorage.getItem('token');
             if (!token) {
                 throw new Error('Нет токена авторизации');
