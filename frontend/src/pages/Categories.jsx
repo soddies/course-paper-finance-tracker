@@ -10,9 +10,13 @@ const Categories = () => {
     const [categories, setCategories] = useState([]);
     const [stats, setStats] = useState({total: 0, myCount: 0, systemCount: 0});
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
      const fetchCategories = async () => {
         try {
+            setLoading(true);
+            setError('');
+
             const token = localStorage.getItem('token');
             const response = await fetch(`http://localhost:3000/api/categories?type=${activeTab}`, {
                 headers: {'Authorization': `Bearer ${token}`}
@@ -24,6 +28,7 @@ const Categories = () => {
             }
         } catch (err) {
             console.error(err);
+            setError(err.message);
         } finally {
             setLoading(false);
         }
@@ -48,6 +53,10 @@ const Categories = () => {
     };
 
     const handleDeleteCategory = async (id) => {
+        if (!window.confirm('Вы уверены, что хотите удалить эту категорию?')) {
+            return;
+        }
+
         try {
             const token = localStorage.getItem('token');
             if (!token) return;
@@ -64,13 +73,13 @@ const Categories = () => {
                 throw new Error(data.error || 'Ошибка удаления категории');
             };
 
-            fetchCategories();
-            fetchStats();
+            await Promise.all([fetchCategories(), fetchStats()]);
         } catch (err) {
             console.error('Ошибка удаления: ', err);
+            setError(err.message);
             alert('Ошибка удаления категории: ', err.message);
         }
-    }
+    };
 
     useEffect(() => {
         fetchStats();
@@ -86,6 +95,29 @@ const Categories = () => {
         setIsModalOpen(false);
     };
 
+    if (loading && categories.length === 0) {
+        return (
+            <div className="category-page">
+                <Header />
+                <div className="categories-loading">
+                    <p>Загрузка категорий...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error && categories.length === 0) {
+        return (
+            <div className="category-page">
+                <Header />
+                <div className="categories-error">
+                    <p>{error}</p>
+                    <button onClick={fetchCategories}>Повторить</button>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="category-page">
             <Header/>
@@ -100,24 +132,24 @@ const Categories = () => {
 
                 <div className="stats-cards">
                     <div className="stat-card-cat">
-                        <span className="stat-value-cat">{stats.total}</span>
+                        <span className="stat-value-cat">{loading ? '...' : stats.total}</span>
                         <span className="stat-label">Всего</span>
                     </div>
                     <div className="stat-card-cat">
-                        <span className="stat-value-cat highlight">{stats.myCount}</span>
+                        <span className="stat-value-cat highlight">{loading ? '...' : stats.myCount}</span>
                         <span className="stat-label">Мои категории</span>
                     </div>
                     <div className="stat-card-cat">
-                        <span className="stat-value-cat muted">{stats.systemCount}</span>
+                        <span className="stat-value-cat muted">{loading ? '...' : stats.systemCount}</span>
                         <span className="stat-label">Системные</span>
                     </div>
                 </div>
 
                 <div className="tabs">
-                    <button className={`tab-btn ${activeTab === 'income' ? 'active' : ''}`} onClick={() => setActiveTab('income')}>
+                    <button className={`tab-btn ${activeTab === 'income' ? 'active' : ''}`} onClick={() => setActiveTab('income')} disabled={loading}>
                         Доходы
                     </button>
-                    <button className={`tab-btn ${activeTab === 'expense' ? 'active' : ''}`} onClick={() => setActiveTab('expense')}>
+                    <button className={`tab-btn ${activeTab === 'expense' ? 'active' : ''}`} onClick={() => setActiveTab('expense')} disabled={loading}>
                         Расходы
                     </button>
                 </div>

@@ -324,6 +324,36 @@
     background: #b0b5b4;
 }
 
+.categories-loading, .categories-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    color: #9BA8AB;
+    font-size: 16px;
+    gap: 15px;
+}
+
+.categories-error {
+    color: #000000;
+}
+
+.categories-error button {
+    background: #4A5C6A;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.categories-error button:hover {
+    background: #06141B;
+}
+
 @media (max-width: 600px) {
     .stats-cards {
         grid-template-columns: 1fr;
