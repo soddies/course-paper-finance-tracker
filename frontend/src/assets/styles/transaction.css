@@ -536,8 +536,8 @@
 .transactions-error {
     text-align: center;
     padding: 40px;
-    color: #e74c3c; 
-    background: #ffebee;
+    color: #000000; 
+    background: #ffffff;
     border-radius: 12px;
 }
 

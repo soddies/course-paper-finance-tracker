@@ -12,6 +12,7 @@ const Transactions = () => {
     const [modalType, setModalType] = useState('income');
     const [filters, setFilters] = useState({});
     const [refreshTrigger, setRefreshTrigger] = useState(0);
+    const [loading, setIsLoading] = useState(true);
     
     const openIncomeModal = () => {
         setModalType('income');
@@ -24,13 +25,15 @@ const Transactions = () => {
     };
 
     const handleTransactionAdded = () => {
+        setIsLoading(true);
         setRefreshTrigger(prev => prev + 1);
         setIsModalOpen(false);
     };
 
     const handleFilterChange = (newFilters) => {
+        setIsLoading(true);
         setFilters(newFilters);
-            setRefreshTrigger(prev => prev + 1);
+        setRefreshTrigger(prev => prev + 1);
     }
 
     return (
@@ -46,11 +49,16 @@ const Transactions = () => {
                     onAddIncome={openIncomeModal}
                     onAddExpense={openExpenseModal}
                 />
-                <FilterPanel onFilterChange={handleFilterChange}/>
+
+                    <div style={{opacity : loading ? 0.5 : 1, pointerEvents: loading ? 'none' : 'auto'}}>
+                        <FilterPanel onFilterChange={handleFilterChange}/>
+                    </div>
+
                 <div style={{ marginTop: '30px' }}>
                     <TransactionList
                         filters={filters}
                         refreshTrigger={refreshTrigger}
+                        setLoading={setIsLoading}
                     />
                 </div>
             </main>

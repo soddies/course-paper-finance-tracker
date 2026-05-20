@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import TransactionModal from './TransactionModal';
 import TransactionItem from './TransactionItem';
 
-const TransactionList = ({ filters = {}, refreshTrigger }) => {
+const TransactionList = ({ filters = {}, refreshTrigger, setLoading }) => {
     const [transactions, setTransactions] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-
+    const [loading, setIsLoading] = useState(true);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editingTransaction, setEditingTransaction] = useState(null);
 
@@ -16,6 +15,9 @@ const TransactionList = ({ filters = {}, refreshTrigger }) => {
 
     const fetchTransactions = async () => {
         try {
+            if (setLoading) {
+                setIsLoading(true);
+            }
             const token = localStorage.getItem('token');
             if (!token) {
                 throw new Error('Нет токена авторизации');
@@ -71,7 +73,10 @@ const TransactionList = ({ filters = {}, refreshTrigger }) => {
         } catch (err) {
             setError(err.message);
         } finally {
-            setLoading(false);
+            setIsLoading(false);
+            if (setLoading) {
+                setLoading(false);
+            }
         }
     };
 
@@ -119,7 +124,7 @@ const TransactionList = ({ filters = {}, refreshTrigger }) => {
     if (loading) {
         return (
             <div className="transactions-loading">
-                Загрузка транзакций...
+                <p>Загрузка транзакций...</p>
             </div>
         );
     }
