@@ -27,6 +27,9 @@ const Dashboard = () => {
 
     const fetchDashboardData = async () => {
         try {
+            setLoading(true);
+            setError('');
+
             const token = localStorage.getItem('token');
             if (!token) {
                 throw new Error('Нет токена авторизации');
@@ -45,9 +48,10 @@ const Dashboard = () => {
 
             const data = await response.json();
             setDashboardData(data);
-            setError('');
+            
         } catch (err) {
             console.error('Dashboard fetch error: ', err);
+            setError(err.message);
         } finally {
             setLoading(false);
         }
@@ -75,20 +79,24 @@ const Dashboard = () => {
         setIsModalOpen(false);
     };
 
-    const formattingMoney = (amount) => {
-        return new Intl.NumberFormat('ru-RU', {
-            style: 'currency',
-            currency: 'RUB',
-            minimumFractionDigits: 2,
-        }).format(amount || 0);
-    };
-
     if (loading) {
         return (
             <div className="dashboard-page">
                 <Header/>
                 <div className="dashboard-loading">
-                    Загрузка данных...
+                    <p>Загрузка данных...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="dashboard-page">
+                <Header />
+                <div className="dashboard-error">
+                    <p>{error}</p>
+                    <button onClick={fetchDashboardData}>Повторить</button>
                 </div>
             </div>
         );
@@ -142,6 +150,7 @@ const Dashboard = () => {
                     expense={monthlyExpense}
                     onAddIncome={openIncomeModal}
                     onAddExpense={openExpenseModal}
+                    disabled={loading}
                 />
 
                 <StatsCards

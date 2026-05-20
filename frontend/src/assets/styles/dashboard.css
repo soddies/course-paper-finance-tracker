@@ -235,14 +235,35 @@
     color: #95a5a6;
 }
 
-.dashboard-loading {
+.dashboard-loading, .dashboard-error {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 200px;
+    min-height: 300px;
     color: #9BA8AB;
     font-size: 16px;
+    gap: 15px;
+    text-align: center;
+}
+
+.dashboard-error {
+    color: #000000;
+}
+
+.dashboard-error button {
+    background: #4A5C6A;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.dashboard-error button:hover {
+    background: #06141B;
 }
 
 @media (max-width: 768px) {
