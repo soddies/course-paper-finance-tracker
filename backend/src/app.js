@@ -5,7 +5,11 @@ const transactionRoutes = require('./routers/transactionRoutes');
 const categoryRoutes = require('./routers/categoryRoutes');
 const analyticsRouter = require('./routers/analyticsRoutes');
 const dashboardRouter = require('./routers/dashboardRoutes');
+
 require('dotenv').config();
+
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./config/swagger');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -18,6 +22,8 @@ app.use('/api/transactions', transactionRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/analytics', analyticsRouter);
 app.use('/api/dashboard', dashboardRouter);
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get('/health', (req, res) => {
     res.json({status: 'OK'});
