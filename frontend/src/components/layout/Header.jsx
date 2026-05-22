@@ -21,7 +21,7 @@ const Header = () => {
     return (
         <header className="header">
             <div className="header-logo">
-                Трекер финансов
+                FinTrack
             </div>
 
             <nav className="nav-menu">
