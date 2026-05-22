@@ -1,9 +1,45 @@
 const express = require('express');
 const router = express.Router();
 const transactionController = require('../controllers/transactionController');
+const categoryService = require('../services/categoryServices');
 const { authenticateToken } = require('../middleware/authMiddleware');
 
 router.use(authenticateToken);
+
+/**
+ * @swagger
+ * /api/transactions/filters/categories:
+ *   get:
+ *     summary: Получить категории для фильтрации транзакций
+ *     tags: [Transactions]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Список категорий успешно получен
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 categories:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Category'
+ *       401:
+ *         description: Не авторизован
+ *       500:
+ *         description: Ошибка сервера
+ */
+router.get('/filters/categories', async (req, res) => {
+    try {
+        const categories = await categoryService.getCategories(req.user.userId);
+        res.json({categories});
+    } catch (error) {
+        console.error('Error fetching categories: ', error);
+        res.status(500).json({error: 'Ошибка загрузки категорий'})
+    }
+});
 
 /**
  * @swagger
