@@ -15,6 +15,18 @@ const TransactionModal = ({isOpen, onClose, type, transaction, onTransactionUpda
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
+    const formatForInput = (dateString) => {
+        if (!dateString) {
+            return ''
+        };
+
+        const date = new Date(dateString);
+        const offset = date.getTimezoneOffset() * 60000;
+        const localDate = new Date(date.getTime() - offset);
+        return localDate.toISOString().slice(0, 16);
+
+    }
+
     useEffect(() => {
         if (!isOpen) return;
 
@@ -48,14 +60,14 @@ const TransactionModal = ({isOpen, onClose, type, transaction, onTransactionUpda
             setFormData({
                 category: transaction.category_id || '',
                 amount: transaction.amount || '',
-                date: transaction.transaction_date ? new Date(transaction.transaction_date).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16),
+                date: transaction.transaction_date ? formatForInput(transaction.transaction_date) : formatForInput(new Date().toISOString()),
                 description: transaction.description || ''
             });
         } else if (!isEditing) {
             setFormData({
                 category: '',
                 amount: '',
-                date: new Date().toISOString().slice(0, 16),
+                date: formatForInput(new Date().toISOString()),
                 description: ''
             });
         }
