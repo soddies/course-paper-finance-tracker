@@ -130,16 +130,17 @@ const TransactionList = ({ filters = {}, refreshTrigger, setLoading }) => {
     if (error) {
         return (
             <div className="transactions-error">
-                {error}
+                <p>{error}</p>
             </div>
         );
     }
 
     if (transactions.length === 0) {
+        const hasActiveFilters = Object.keys(filters).length > 0;
         return (
             <div className="transactions-empty">
-                <h3>Транзакций пока нет</h3>
-                <p>Добавьте первую операцию, чтобы увидеть её здесь</p>
+                <h3>{hasActiveFilters ? "Ничего не найдено" : "Транзакций пока нет"}</h3>
+                <p>{hasActiveFilters ? "Попробуйте изменить парамтры поиска или сбросить фильтры" : "Добавьте первую операцию, чтобы увидеть её здесь"}</p>
             </div>
         );
     }
