@@ -230,6 +230,11 @@ const Analytics = () => {
                                 <option key={year} value={year}>{year}</option>
                             ))}
                         </select>
+                        <select className='month-select' value={selectedMonth} onChange={(e) => setSelectedMonth(Number(e.target.value))} disabled={loading}>
+                            {months.map((monthName, index)=> (
+                                <option key={index} value={index}>{monthName}</option>
+                            ))}
+                        </select>
                     </div>
                 </div>
 
