@@ -102,35 +102,34 @@ const Dashboard = () => {
         );
     }
 
-    const totalBalance = dashboardData?.totalBalance || 0;
-    const monthlyIncome = dashboardData?.monthlyIncome || 0;
-    const monthlyExpense = dashboardData?.monthlyExpense || 0;
-    const transactionsCount = dashboardData?.transactionCount || 0;
-
-    const todayData = {
-        income: 0,
-        expense: 0,
-        balance: 0,
-        count: 0
-    }; // будет сделано отдельно
-
-    const weekData = {
-        income: 0,
-        expense: 0,
-        balance: 0,
-        count: 0
-    }; // будет сделано отдельно
-
-    const monthData = {
-        income: monthlyIncome,
-        expense: monthlyExpense,
-        balance: monthlyIncome - monthlyExpense,
-        count: transactionsCount
-    };
-
     if (!user) {
         return null;
     }
+
+    const totalBalance = dashboardData?.totalBalance || 0;
+    const monthlyIncome = dashboardData?.monthlyIncome || 0;
+    const monthlyExpense = dashboardData?.monthlyExpense || 0;
+
+    const todayData = {
+        income: dashboardData?.todayIncome || 0,
+        expense: dashboardData?.todayExpense || 0,
+        balance: dashboardData?.todayBalance || 0,
+        count: dashboardData?.todayCount || 0
+    };
+
+    const weekData = {
+        income: dashboardData?.weekIncome || 0,
+        expense: dashboardData?.weekExpense || 0,
+        balance: dashboardData?.weekBalance || 0,
+        count: dashboardData?.weekCount || 0
+    };
+
+    const monthData = {
+        income: dashboardData?.monthlyIncome || 0,
+        expense: dashboardData?.monthlyExpense || 0,
+        balance: dashboardData?.monthlyBalance || 0,
+        count: dashboardData?.monthlyCount || 0
+    };
 
     return (
         <div className="dashboard-page">
