@@ -38,23 +38,33 @@ const generateTransactionPDF = async (userId, filters = {}) => {
             let paramIndex = 2;
 
             if (filters.type && filters.type !== 'all') {
-                query += ` and t.type = $${paramIndex++}`;
+                query += ` and t.type = $${paramIndex}`;
                 params.push(filters.type);
+                paramIndex++;
             }
 
             if (filters.categoryId && filters.categoryId !== 'all') {
-                query += ` and t.category_id = $${paramIndex++}`;
+                query += ` and t.category_id = $${paramIndex}`;
                 params.push(filters.categoryId);
+                paramIndex++
             }
 
             if (filters.dateFrom) {
-                query += ` and t.transaction_date >= $${paramIndex++}`;
+                query += ` and t.transaction_date >= $${paramIndex}`;
                 params.push(filters.dateFrom);
+                paramIndex++
             }
 
             if (filters.dateTo) {
-                query += ` and t.transaction_date <= $${paramIndex++}`;
+                query += ` and t.transaction_date <= $${paramIndex}`;
                 params.push(filters.dateTo);
+                paramIndex++
+            }
+
+            if (filters.search) {
+                query += ` and t.description ilike $${paramIndex} or c.name ilike $${paramIndex}`;
+                params.push(`%${filters.search}%`);
+                paramIndex++;
             }
 
             if (filters.sortBy && filters.sortOrder) {

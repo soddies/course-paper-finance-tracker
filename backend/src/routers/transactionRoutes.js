@@ -320,6 +320,7 @@ router.get('/export/pdf', async (req, res) => {
     try {
         const userId = req.user.userId;
         const filters = {
+            search: req.query.search,
             type: req.query.type,
             categoryId: req.query.categoryId,
             dateFrom: req.query.dateFrom,
