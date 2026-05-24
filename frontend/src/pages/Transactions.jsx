@@ -42,6 +42,7 @@ const Transactions = () => {
 
             <main style={{maxWidth: '1200px', margin: '0 auto', padding: '40px 20px'}}>
                 <TransactionHeader 
+                    filters={filters}
                     onAddIncome={openIncomeModal}
                     onAddExpense={openExpenseModal}
                 />

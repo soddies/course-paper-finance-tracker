@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const transactionController = require('../controllers/transactionController');
 const categoryService = require('../services/categoryServices');
+const pdfService = require('../services/pdfService');
 const { authenticateToken } = require('../middleware/authMiddleware');
 
 router.use(authenticateToken);
@@ -275,5 +276,69 @@ router.put('/:id', transactionController.updateTransaction);
  *         description: Транзакция не найдена
  */
 router.delete('/:id', transactionController.deleteTransaction);
+
+/**
+ * @swagger
+ * /api/transactions/export/pdf:
+ *   get:
+ *     summary: Экспортировать транзакции в PDF
+ *     tags: [Transactions]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: type
+ *         schema:
+ *           type: string
+ *           enum: [income, expense, all]
+ *       - in: query
+ *         name: categoryId
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: dateFrom
+ *         schema:
+ *           type: string
+ *           format: date
+ *       - in: query
+ *         name: dateTo
+ *         schema:
+ *           type: string
+ *           format: date
+ *     responses:
+ *       200:
+ *         description: PDF файл
+ *         content:
+ *           application/pdf:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       401:
+ *         description: Не авторизован
+ */
+router.get('/export/pdf', async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const filters = {
+            type: req.query.type,
+            categoryId: req.query.categoryId,
+            dateFrom: req.query.dateFrom,
+            dateTo: req.query.dateTo,
+            sortBy: req.query.sortBy,
+            sortOrder: req.query.sortOrder
+        };
+
+        const doc = await pdfService.generateTransactionPDF(userId, filters);
+
+        const filename = `transactions_${new Date().toISOString().slice(0, 10)}.pdf`;
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+        doc.pipe(res);
+    } catch (error) {
+        console.error('PDF export error: ', error);
+        res.status(500).json({error: 'Ошибка генерации PDF'});
+    }
+});
 
 module.exports = router;

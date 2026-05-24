@@ -140,7 +140,7 @@ const TransactionList = ({ filters = {}, refreshTrigger, setLoading }) => {
         return (
             <div className="transactions-empty">
                 <h3>{hasActiveFilters ? "Ничего не найдено" : "Транзакций пока нет"}</h3>
-                <p>{hasActiveFilters ? "Попробуйте изменить парамтры поиска или сбросить фильтры" : "Добавьте первую операцию, чтобы увидеть её здесь"}</p>
+                <p>{hasActiveFilters ? "Попробуйте изменить параметры поиска или сбросить фильтры" : "Добавьте первую операцию, чтобы увидеть её здесь"}</p>
             </div>
         );
     }
