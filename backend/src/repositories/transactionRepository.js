@@ -117,5 +117,5 @@ module.exports = {
     getUserTransactions,
     getTransactionsById,
     updateTransaction,
-    deleteTransaction
+    deleteTransaction,
 };
