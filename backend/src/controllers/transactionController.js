@@ -1,35 +1,17 @@
 const transactionService = require('../services/transactionService');
-const {createTransactionSchema, updateTransactionSchema, filterTransactionsSchema, transactionIdSchema} = require('../models/transactionModel');
 
 const createTransaction = async (req, res) => {
     try {
-        const validated = createTransactionSchema.parse(req.body);
-
+        const {type, amount, categoryId, description, transactionDate} = req.body;
         const userId = req.user.userId;
 
-        const transaction = await transactionService.createTransaction(
-            userId,
-            validated.type,
-            validated.amount,
-            validated.categoryId,
-            validated.description,
-            validated.transactionDate ? new Date(validated.transactionDate) : new Date()
-        );
+        const transaction = await transactionService.createTransaction(userId, type, amount, categoryId, description, transactionDate ? new Date(transactionDate) : new Date());
 
         res.status(201).json({
             message: 'Транзакция создана',
             transaction
         });
     } catch (error) {
-        if (error.name === 'ZodError') {
-            return res.status(400).json({
-                error: 'Ошибка валидации',
-                details: error.issues.map(e => ({
-                    field: e.path.join('.'),
-                    message: e.message
-                }))
-            });
-        }
         console.error('Create transaction error: ', error);
         res.status(500).json({message: 'Ошибка сервера'});
     }
@@ -37,8 +19,9 @@ const createTransaction = async (req, res) => {
 
 const getTransactions = async (req, res) => {
     try {
-        const filters = filterTransactionsSchema.parse(req.query);
+        const filters = req.query;
         const userId = req.user.userId;
+
         const transactions = await transactionService.getUserTransactions(userId, filters);
 
         res.status(200).json({
@@ -46,15 +29,6 @@ const getTransactions = async (req, res) => {
             transactions
         });
     } catch (error) {
-        if (error.name === 'ZodError') {
-            return res.status(400).json({
-                error: 'Ошибка в параметрах запроса',
-                details: error.issues.map(e => ({
-                    field: e.path.join('.'),
-                    message: e.message
-                }))
-            });
-        }
         console.error('Get transaction error: ', error);
         res.status(500).json({message: 'Ошибка сервера'});
     }
@@ -62,7 +36,7 @@ const getTransactions = async (req, res) => {
 
 const getTransactionById = async (req, res) => {
     try {
-        const {id} = transactionIdSchema.parse(req.params);
+        const {id} = req.params;
         const userId = req.user.userId;
         const transaction = await transactionService.getTransactionsById(id, userId);
 
@@ -71,15 +45,6 @@ const getTransactionById = async (req, res) => {
         }
         res.status(200).json({transaction});
     } catch (error) {
-        if (error.name === 'ZodError') {
-            return res.status(400).json({
-                error: 'Неверный формат ID',
-                details: error.issues.map(e => ({
-                    field: e.path.join('.'),
-                    message: e.message
-                }))
-            });
-        }
         console.error('Get transactions by ID error: ', error);
         res.status(500).json({message: 'Ошибка сервера'});
     }
@@ -87,20 +52,19 @@ const getTransactionById = async (req, res) => {
 
 const updateTransaction = async (req, res) => {
     try {
-        const {id} = transactionIdSchema.parse(req.params);
-        const validated = updateTransactionSchema.parse(req.body);
-
+        const {id} = req.params;
+        const {type, amount, categoryId, description, transactionDate} = req.body;
         const userId = req.user.userId;
 
         const transaction = await transactionService.updateTransaction(
             id,
             userId,
             {
-                type: validated.type,
-                amount: validated.amount,
-                categoryId: validated.categoryId,
-                description: validated.description,
-                transactionDate: validated.transactionDate ? new Date(validated.transactionDate) : undefined
+                type,
+                amount,
+                categoryId,
+                description,
+                transactionDate: transactionDate ? new Date(transactionDate) : undefined
             }
         );
 
@@ -113,16 +77,6 @@ const updateTransaction = async (req, res) => {
             transaction
         });
     } catch (error) {
-        if (error.name === 'ZodError') {
-            return res.status(400).json({
-                error: 'Ошибка валидации',
-                details: error.issues.map(e => ({
-                    field: e.path.join('.'),
-                    message: e.message
-                }))
-            });
-        }
-
         console.error('Update error message: ', error);
         res.status(500).json({message: 'Ошибка сервера'});
     }
@@ -130,20 +84,13 @@ const updateTransaction = async (req, res) => {
 
 const deleteTransaction = async (req, res) => {
     try {
-        const {id} = transactionIdSchema.parse(req.params);
+        const {id} = req.params;
         const userId = req.user.userId;
 
         await transactionService.deleteTransaction(id, userId);
 
         res.status(200).json({message: 'Транзакция удалена'});
     } catch (error) {
-        if (error.name === 'ZodError') {
-            return res.status(400).json({
-                error: 'Неверный формат ID',
-                details: error.issues.map(e => e.message)
-            })
-        }
-
         console.error('Delete error message: ', error);
         res.status(500).json({message: 'Ошибка сервера'});
     }

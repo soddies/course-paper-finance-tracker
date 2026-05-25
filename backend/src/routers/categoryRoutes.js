@@ -1,9 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const categoryController = require('../controllers/categoryController');
-const { authenticateToken } = require('../middleware/authMiddleware');
+const {createCategorySchema, filterCategoriesSchema, categoryIdSchema} = require('../validate/categoryValidateZod');
+const {validateRequest} = require('../middleware/validateMiddleware');
+const {authenticateToken} = require('../middleware/authMiddleware');
 
 router.use(authenticateToken);
+
 
 /**
  * @swagger
@@ -154,7 +157,7 @@ router.get('/filters', categoryController.getCategoriesFilter);
  *       401:
  *         description: Не авторизован
  */
-router.get('/', categoryController.getCategories);
+router.get('/', validateRequest(filterCategoriesSchema, 'query'), categoryController.getCategories);
 
 /**
  * @swagger
@@ -187,7 +190,7 @@ router.get('/', categoryController.getCategories);
  *       401:
  *         description: Не авторизован
  */
-router.post('/', categoryController.createCategory);
+router.post('/', validateRequest(createCategorySchema, 'body'), categoryController.createCategory);
 
 /**
  * @swagger
@@ -214,6 +217,6 @@ router.post('/', categoryController.createCategory);
  *       401:
  *         description: Не авторизован
  */
-router.delete('/:id', categoryController.deleteCategory);
+router.delete('/:id', validateRequest(categoryIdSchema, 'params'), categoryController.deleteCategory);
 
 module.exports = router;

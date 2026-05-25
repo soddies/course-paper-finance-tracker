@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const analyticsController = require('../controllers/analyticsController');
-const { authenticateToken } = require('../middleware/authMiddleware');
+const {analyticsQuerySchema} = require('../validate/analyticsValidateZod');
+const {validateRequest} = require('../middleware/validateMiddleware');
+const {authenticateToken} = require('../middleware/authMiddleware');
 
 router.use(authenticateToken);
 
@@ -113,6 +115,6 @@ router.use(authenticateToken);
  *       500:
  *         description: Ошибка сервера
  */
-router.get('/', analyticsController.getAnalytics);
+router.get('/', validateRequest(analyticsQuerySchema, 'query'), analyticsController.getAnalytics);
 
 module.exports = router;

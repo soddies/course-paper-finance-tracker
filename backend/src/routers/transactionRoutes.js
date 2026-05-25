@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const transactionController = require('../controllers/transactionController');
-const { authenticateToken } = require('../middleware/authMiddleware');
+const {createTransactionSchema, updateTransactionSchema, filterTransactionsSchema, transactionIdSchema} = require('../validate/transactionValidateZod');
+const {validateRequest} = require('../middleware/validateMiddleware');
+const {authenticateToken} = require('../middleware/authMiddleware');
 
 router.use(authenticateToken);
 
@@ -106,7 +108,7 @@ router.use(authenticateToken);
  *       401:
  *         description: Не авторизован
  */
-router.post('/', transactionController.createTransaction);
+router.post('/', validateRequest(createTransactionSchema, 'body'), transactionController.createTransaction);
 
 /**
  * @swagger
@@ -154,7 +156,7 @@ router.post('/', transactionController.createTransaction);
  *       500:
  *         description: Ошибка сервера
  */
-router.get('/', transactionController.getTransactions);
+router.get('/', validateRequest(filterTransactionsSchema, 'query'), transactionController.getTransactions);
 
 /**
  * @swagger
@@ -186,7 +188,7 @@ router.get('/', transactionController.getTransactions);
  *       401:
  *         description: Не авторизован
  */
-router.get('/:id', transactionController.getTransactionById);
+router.get('/:id', validateRequest(transactionIdSchema, 'params'), transactionController.getTransactionById);
 
 /**
  * @swagger
@@ -216,7 +218,7 @@ router.get('/:id', transactionController.getTransactionById);
  *       404:
  *         description: Транзакция не найдена
  */
-router.put('/:id', transactionController.updateTransaction);
+router.put('/:id', validateRequest(transactionIdSchema, 'params'), validateRequest(updateTransactionSchema, 'body'), transactionController.updateTransaction);
 
 /**
  * @swagger
@@ -238,6 +240,6 @@ router.put('/:id', transactionController.updateTransaction);
  *       404:
  *         description: Транзакция не найдена
  */
-router.delete('/:id', transactionController.deleteTransaction);
+router.delete('/:id', validateRequest(transactionIdSchema, 'params'), transactionController.deleteTransaction);
 
 module.exports = router;

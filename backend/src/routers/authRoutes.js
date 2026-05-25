@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
-const {validateRegister, validateLogin} = require('../middleware/authValidate');
+const {loginSchema, registerSchema} = require('../validate/authValidateZod');
+const {validateRequest} = require('../middleware/validateMiddleware');
 
 /**
  * @swagger
@@ -93,7 +94,7 @@ const {validateRegister, validateLogin} = require('../middleware/authValidate');
  *       500:
  *         description: Ошибка сервера
  */
-router.post('/register', authController.register);
+router.post('/register', validateRequest(registerSchema), authController.register);
 
 /**
  * @swagger
@@ -119,6 +120,6 @@ router.post('/register', authController.register);
  *       500:
  *         description: Ошибка сервера
  */
-router.post('/login', authController.login);
+router.post('/login', validateRequest(loginSchema), authController.login);
 
 module.exports = router;
