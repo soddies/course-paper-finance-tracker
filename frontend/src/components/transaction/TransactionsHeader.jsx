@@ -36,7 +36,7 @@ const TransactionHeader = ({filters = {}}) => {
                 params.append('sortOrder', filters.sortOrder);
             }
 
-            const url = `http://localhost:3000/api/transactions/export/${format}?${params}`;
+            const url = `http://localhost:3000/api/export/${format}?${params}`;
 
             const response = await fetch(url, {
                 headers: {
@@ -76,7 +76,7 @@ const TransactionHeader = ({filters = {}}) => {
 
                     {isOpen && (
                         <div className="dropdown-menu">
-                            <button className='dropdown-option' onClick={() => handleExport('csv-all')}>
+                            <button className='dropdown-option' onClick={() => handleExport('csv')}>
                                 <img src={csvIcon} alt="csv" className='btn-icon'/>
                                 В CSV
                             </button>

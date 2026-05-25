@@ -23,7 +23,7 @@ const FilterPanel = ({onFilterChange}) => {
                 const token = localStorage.getItem('token');
                 if (!token) return;
 
-                const response = await fetch('http://localhost:3000/api/transactions/filters/categories', {
+                const response = await fetch('http://localhost:3000/api/categories/filters', {
                     headers: {
                         'Authorization' : `Bearer ${token}`
                     }
