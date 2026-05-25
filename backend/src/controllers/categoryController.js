@@ -88,9 +88,22 @@ const deleteCategory = async (req, res) => {
     }
 };
 
+const getCategoriesFilter = async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const categories = await categoryService.getCategories(userId);
+
+        res.json({categories});
+    } catch (error) {
+        console.error('Error fetching caterogies: ', error);
+        res.status(500).json({error: 'Ошибка загрузки категорий'})
+    }
+}
+
 module.exports = {
     getCategories,
     createCategory,
     deleteCategory,
-    getCategoryStats
+    getCategoryStats,
+    getCategoriesFilter
 };

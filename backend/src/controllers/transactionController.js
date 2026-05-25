@@ -147,7 +147,9 @@ const deleteTransaction = async (req, res) => {
         console.error('Delete error message: ', error);
         res.status(500).json({message: 'Ошибка сервера'});
     }
-}
+};
+
+
 
 module.exports = {
     createTransaction,

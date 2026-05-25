@@ -9,7 +9,7 @@ router.use(authenticateToken);
  * @swagger
  * tags:
  *   name: Categories
- *   description: Управление категориями доходов и расходов
+ *   description: Управление категориями доходов и расходов + получение категорий для фильтров в транзакциях
  */
 
 /**
@@ -95,6 +95,34 @@ router.use(authenticateToken);
  *         description: Не авторизован
  */
 router.get('/stats', categoryController.getCategoryStats);
+
+/**
+ * @swagger
+ * /api/categories/filters:
+ *   get:
+ *     summary: Получить список категорий для фильтрации
+ *     tags: [Categories]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Список категорий успешно получен
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 categories:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Category'
+ *       401:
+ *         description: Не авторизован
+ *       500:
+ *         description: Ошибка сервера
+ */
+router.get('/filters', categoryController.getCategoriesFilter);
+
 
 /**
  * @swagger
