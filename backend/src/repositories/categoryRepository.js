@@ -43,7 +43,7 @@ const createCategory = async (userId, name, type, icon) => {
 
 const getCategoryById = async (id, userId) => {
     const result = await pool.query(
-        'select * from categories where id = $1 and user_id = $2',
+        'select * from categories where id = $1 and (user_id = $2 or is_system = true)',
         [id, userId]
     );
     return result.rows[0];

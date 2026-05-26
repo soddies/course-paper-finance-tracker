@@ -19,7 +19,7 @@ const categoryService = {
 
     async deleteCategory(categoryId, userId) {
 
-        const category = categoryRepository.getCategoryById(categoryId, userId);
+        const category = await categoryRepository.getCategoryById(categoryId, userId);
 
         if (!category) {
             throw new Error('Категория не найдена');
