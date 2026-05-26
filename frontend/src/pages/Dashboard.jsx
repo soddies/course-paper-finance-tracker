@@ -137,10 +137,9 @@ const Dashboard = () => {
 
             <main className="dashboard-content">
                 <section className="welcome-section">
-                    <h1 className="welcome-title">Добро пожаловать!</h1>
+                    <h1 className="welcome-title">Здравствуйте, {user.email.split('@')[0]}</h1>
                     <p className="welcome-subtitle">
-                        Сегодня {new Date().toLocaleDateString('ru-RU')} • {user.email}
-                    </p>
+                        Текущая дата: {new Date().toLocaleDateString('ru-RU')}</p>
                 </section>
 
                 <BalanceCard 
