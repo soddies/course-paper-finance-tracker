@@ -38,7 +38,7 @@ const Header = () => {
                     Аналитика
                 </Link>
                 <Link to="/targets" className={`nav-item ${isActive('/targets') ? 'active' : ''}`}>
-                    Цели накопления
+                    Цели накоплений
                 </Link>
                 <Link to="/profile" className={`nav-item ${isActive('/profile') ? 'active' : ''}`}>
                     Профиль

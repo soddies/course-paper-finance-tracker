@@ -6,6 +6,7 @@ const categoryRoutes = require('./routers/categoryRoutes');
 const analyticsRouter = require('./routers/analyticsRoutes');
 const dashboardRouter = require('./routers/dashboardRoutes');
 const exportRouter = require('./routers/exportsRoutes');
+const targetsRouter = require('./routers/targetsRoutes');
 
 require('dotenv').config();
 
@@ -24,6 +25,7 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/analytics', analyticsRouter);
 app.use('/api/dashboard', dashboardRouter);
 app.use('/api/export/', exportRouter);
+app.use('/api/targets', targetsRouter);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
