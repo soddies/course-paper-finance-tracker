@@ -10,7 +10,7 @@ const createCategorySchema = z.object({
 
 const filterCategoriesSchema = z.object({
     type: z.enum(['income', 'expense', 'all']).optional(),
-}).passthrough();
+});
 
 const categoryIdSchema = z.object({
     id: z.string().regex(/^\d+$/, 'ID должен быть числом').transform(val => parseInt(val))
