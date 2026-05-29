@@ -95,7 +95,7 @@ const Analytics = () => {
                 data: analyticsData?.dailyStats.map(d => d.income) || [],
                 backgroundColor: '#bec4c9',
                 borderRadius: 4,
-                borderThickness: 8,
+                barThickness: 8,
             },
             {
                 label: 'Расходы',
