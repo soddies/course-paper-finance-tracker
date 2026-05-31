@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const transactionController = require('../controllers/transactionController');
-const {createTransactionSchema, updateTransactionSchema, filterTransactionsSchema, transactionIdSchema} = require('../validate/transactionValidateZod');
+const {createTransactionSchema, updateTransactionSchema, filterTransactionsSchema, transactionIdSchema} = require('../schemas/transactionSchema');
 const {validateRequest} = require('../middleware/validateMiddleware');
 const {authenticateToken} = require('../middleware/authMiddleware');
 

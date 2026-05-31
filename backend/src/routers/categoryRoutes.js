@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const categoryController = require('../controllers/categoryController');
-const {createCategorySchema, filterCategoriesSchema, categoryIdSchema} = require('../validate/categoryValidateZod');
+const {createCategorySchema, filterCategoriesSchema, categoryIdSchema} = require('../schemas/categorySchema');
 const {validateRequest} = require('../middleware/validateMiddleware');
 const {authenticateToken} = require('../middleware/authMiddleware');
 

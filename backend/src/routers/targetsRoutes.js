@@ -3,7 +3,7 @@ const router = express.Router();
 const targetController = require('../controllers/targetsController');
 const { authenticateToken } = require('../middleware/authMiddleware');
 const { validateRequest } = require('../middleware/validateMiddleware');
-const { createTargetSchema, updateTargetSchema, addAmountSchema } = require('../validate/targetValidateZod');
+const { createTargetSchema, updateTargetSchema, addAmountSchema } = require('../schemas/targetSchema');
 
 router.use(authenticateToken);
 
