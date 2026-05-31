@@ -4,7 +4,7 @@ const getTargets = async (userId) => {
     return await targetRepository.getUserTargets(userId);
 };
 
-const getTargetsById = async (targetId, userId) => {
+const getTargetById = async (targetId, userId) => {
     return await targetRepository.getTargetById(targetId, userId);
 };
 
@@ -21,21 +21,22 @@ const updateTarget = async (targetId, userId, updates) => {
         throw new Error('Цель не найдена');
     }
 
-    if (updates.current_amount !== undefined) {
-        const newCurrent = Number(updates.current_amount);
-        const targetAmount = Number(existingTarget.target_amount);
-        
-        if (newCurrent > targetAmount) {
-            throw new Error(`Текущая сумма (${newCurrent} ₽) не может превышать целевую (${targetAmount} ₽)`);
-        }
+    const newCurrent = updates.current_amount !== undefined ? Number(updates.current_amount) : Number(existingTarget.current_amount);
+    const newTarget = updates.target_amount !== undefined ? Number(updates.target_amount) : Number(existingTarget.target_amount);
+
+    if (newCurrent > newTarget) {
+        throw new Error(`Текущая сумма (${newCurrent} ₽) не может превышать целевую (${newTarget} ₽)`);
     }
 
-    if (updates.target_amount !== undefined) {
-        const newTarget = Number(updates.target_amount);
-        const current = Number(existingTarget.current_amount);
-        
-        if (newTarget < current) {
-            throw new Error(`Целевая сумма (${newTarget} ₽) не может быть меньше уже накопленной (${current} ₽)`);
+    if (updates.target_amount !== undefined && newTarget < newCurrent) {
+        throw new Error(`Целевая сумма (${newTarget} ₽) не может быть меньше уже накопленной (${newCurrent} ₽)`);
+    }
+
+    if (newCurrent >= newTarget) {
+        updates.status = 'completed';
+    } else {
+        if (existingTarget.status === 'completed') {
+            updates.status = 'active';
         }
     }
     return await targetRepository.updateTarget(targetId, userId, updates); 
@@ -59,7 +60,7 @@ const deleteTarget = async (targetId, userId) => {
 
 module.exports = {
     getTargets,
-    getTargetsById,
+    getTargetById,
     createTarget,
     updateTarget,
     addAmount,

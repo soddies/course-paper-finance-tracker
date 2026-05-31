@@ -13,7 +13,7 @@ const getTargetById = async (targetId, userId) => {
         `select * from targets where id = $1 and user_id = $2`,
         [targetId, userId]
     );
-    return result.rows;
+    return result.rows[0];
 };
 
 const createTarget = async (userId, {name, target_amount, current_amount, deadline, icon}) => {
@@ -29,7 +29,7 @@ const createTarget = async (userId, {name, target_amount, current_amount, deadli
 const updateTarget = async (targetId, userId, updates) => {
     const fields = Object.keys(updates);
     const values = Object.values(updates);
-    const setClause = fields.map((fields, i) => `${fields} = $${i+1}`).join(', ');
+    const setClause = fields.map((field, i) => `${field} = $${i+1}`).join(', ');
     values.push(targetId);
     values.push(userId);
 
@@ -40,13 +40,13 @@ const updateTarget = async (targetId, userId, updates) => {
     return result.rows[0];
 };
 
-const addAmount = async (targetId, amount) => {
+const addAmount = async (targetId, userId, amount) => {
     const result = await pool.query(
         `update targets 
         set current_amount = current_amount + $1
-        where id = $2
+        where id = $2 and user_id = $3
         returning *`,
-        [amount, targetId]
+        [amount, targetId, userId]
     );
     return result.rows[0];
 };
