@@ -63,7 +63,7 @@ const TargetModal = ({target, onClose, onSave}) => {
             today.setHours(0,0,0,0);
 
             if (deadlineDate < today) {
-                alert('Дедлайн не может быть в прошлом! Выбирите будущую дату');
+                alert('Дедлайн не может быть в прошлом! Выберите будущую дату');
                 return;
             }
         }
