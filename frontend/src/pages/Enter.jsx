@@ -14,7 +14,7 @@ const Enter = () => {
     });
 
     const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
+    const [setLoading] = useState(false);
 
     useEffect(() => {
         if (location.state?.email) {

@@ -15,7 +15,7 @@ const Auth = () => {
     });
 
     const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
+    const [setLoading] = useState(false);
 
     const handleChange = (e) => {
         setFormData({
