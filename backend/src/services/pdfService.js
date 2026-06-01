@@ -6,9 +6,9 @@ const pdfRepository = require('../repositories/pdfRepository');
 const generateTransactionPDF = async (userId, filters = {}) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const fontPath = path.join(__dirname, '../../fonts/DejaVuSans.ttf')
-            const fontBold = path.join(__dirname, '../../fonts/DejaVuSans-Bold.ttf')
-            const fontOblique = path.join(__dirname, '../../fonts/DejaVuSans-Oblique.ttf')
+            const fontPath = path.join(__dirname, '../../fonts/ttf/DejaVuSans.ttf')
+            const fontBold = path.join(__dirname, '../../fonts/ttf/DejaVuSans-Bold.ttf')
+            const fontOblique = path.join(__dirname, '../../fonts/ttf/DejaVuSans-Oblique.ttf')
 
             if (!fs.existsSync(fontPath)) {
                 console.warn('Шрифт не найден')
