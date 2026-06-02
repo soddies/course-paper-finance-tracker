@@ -14,13 +14,13 @@ const Enter = () => {
     });
 
     const [error, setError] = useState('');
-    const [setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (location.state?.email) {
             setFormData(prev => ({...prev, email: location.state.email}));
         }
-    }, [location.state]);
+    }, [location.state?.email]);
 
     const handleChange = (e) => {
         setFormData({
@@ -61,8 +61,6 @@ const Enter = () => {
             navigate('/dashboard');
         } catch (err) {
             setError(err.message);
-        } finally {
-            setLoading(false);
         }
     };
 
