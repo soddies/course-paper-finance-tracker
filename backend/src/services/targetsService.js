@@ -9,8 +9,15 @@ const getTargetById = async (targetId, userId) => {
 };
 
 const createTarget = async (userId, data) => {
-    if (data.current_amount > data.target_amount) {
+    const currentAmount = Number(data.current_amount) || 0;
+    const targetAmount = Number(data.target_amount);
+    if (currentAmount > targetAmount) {
         throw new Error('Текущая сумма не может превышать целевую при создании');
+    }
+    if (currentAmount >= targetAmount) {
+        data.status = 'completed';
+    } else {
+        data.status = data.status || 'active';
     }
     return await targetRepository.createTarget(userId, data);
 };
@@ -47,7 +54,24 @@ const addAmount = async (targetId, userId, amount) => {
     if (!existingTarget) {
         throw new Error('Цель для добавления суммы не найдена');
     }
-    return await targetRepository.addAmount(targetId, amount);
+    const currentAmount = Number(existingTarget.current_amount);
+    const targetAmount = Number(existingTarget.target_amount);
+    const addValue = Number(amount);
+    const newTotal = currentAmount + addValue;
+
+    if (newTotal > targetAmount) {
+        throw new Error(`Нельзя добавить ${addValue} ₽. Превышена целевая сумма (${targetAmount} ₽). Доступно: ${targetAmount - currentAmount} ₽`);
+    }
+    
+    const updates = {
+        current_amount: newTotal
+    };
+
+    if (newTotal >= targetAmount) {
+        updates.status = 'completed';
+    }
+
+    return await targetRepository.updateTarget(targetId, userId, updates);
 };
 
 const deleteTarget = async (targetId, userId) => {

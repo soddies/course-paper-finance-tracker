@@ -16,12 +16,12 @@ const getTargetById = async (targetId, userId) => {
     return result.rows[0];
 };
 
-const createTarget = async (userId, {name, target_amount, current_amount, deadline, icon}) => {
+const createTarget = async (userId, {name, target_amount, current_amount, deadline, icon, status}) => {
     const result = await pool.query(
-        `insert into targets (user_id, name, target_amount, current_amount, deadline, icon)
-        values ($1, $2, $3, $4, $5, $6)
+        `insert into targets (user_id, name, target_amount, current_amount, deadline, icon, status)
+        values ($1, $2, $3, $4, $5, $6, $7)
         returning *`,
-        [userId, name, target_amount, current_amount, deadline || null, icon]
+        [userId, name, target_amount, current_amount, deadline || null, icon, status || 'active']
     );
     return result.rows[0];
 };

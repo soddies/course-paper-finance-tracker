@@ -31,11 +31,8 @@ const updateTarget = async (req, res) => {
         const updates = req.body;
 
         const targetId = parseInt(id);
-        const updateTarget = await targetService.updateTarget(targetId, userId, updates);
-        if (!updateTarget) {
-            return res.status(404).json({error: 'Цель не найдена'});
-        }
-        res.status(200).json(updateTarget);
+        const updatedTarget = await targetService.updateTarget(targetId, userId, updates);
+        res.status(200).json(updatedTarget);
     } catch (error) {
         console.error('Update target error: ', error);
         if (error.message === 'NOT_FOUND') {
@@ -51,11 +48,11 @@ const addAmount = async (req, res) => {
         const userId = req.user.userId;
         const {amount} = req.body;
 
-        const updateTarget = await targetService.addAmount(parseInt(id), userId, amount);
-        if (!updateTarget) {
+        const updatedTarget = await targetService.addAmount(parseInt(id), userId, amount);
+        if (!updatedTarget) {
             return res.status(404).json({error: 'Цель не найдена'});
         }
-        res.status(200).json(updateTarget);
+        res.status(200).json(updatedTarget);
     } catch (error) {
         console.error('Add amount error: ', error);
         if (error.message === 'NOT_FOUND') {
@@ -95,9 +92,6 @@ const deleteTarget = async (req, res) => {
         const userId = req.user.userId;
 
         const delTarget = await targetService.deleteTarget(parseInt(id), userId);
-        if (!delTarget) {
-            return res.status(404).json({error: 'Цель не найдена'});
-        }
         res.status(200).json(delTarget);
     } catch (error) {
         console.error('Delete target error: ', error);

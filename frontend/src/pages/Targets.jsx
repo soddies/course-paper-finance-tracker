@@ -145,9 +145,8 @@ const Targets = () => {
             if (!response.ok) {
                 throw new Error(data.error || 'Ошибка пополения');
             }
-
             await fetchTargets();
-            setIsModalOpen(false);
+            setIsAddModal(false);
             setAddingTarget(null);
         } catch (err) {
             console.error('Add amount error: ', err);

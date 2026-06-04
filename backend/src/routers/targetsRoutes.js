@@ -297,7 +297,7 @@ router.put('/:id', validateRequest(updateTargetSchema), targetController.updateT
  *       404:
  *         description: Цель не найдена
  */
-router.patch('/:id/toggle-pause', authenticateToken, targetController.togglePause);
+router.patch('/:id/toggle-pause', targetController.togglePause);
 
 /**
  * @swagger
