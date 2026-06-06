@@ -1,11 +1,11 @@
 const pool = require('../config/database')
 
-const createTransaction = async (userId, type, amount, categoryId, description, transactionDate) => {
+const createTransaction = async (userId, type, amount, categoryId, description, transactionDate, targetId = null) => {
     const result = await pool.query(
-        `insert into transactions (user_id, type, amount, category_id, description, transaction_date)
-        values ($1, $2, $3, $4, $5, $6)
+        `insert into transactions (user_id, type, amount, category_id, description, transaction_date, target_id)
+        values ($1, $2, $3, $4, $5, $6, $7)
         returning *`,
-        [userId, type, amount, categoryId || null, description, transactionDate || new Date()]
+        [userId, type, amount, categoryId || null, description, transactionDate || new Date(), targetId]
     );
     return result.rows[0];
 };
@@ -80,12 +80,13 @@ const getUserTransactions = async (userId, filters = {}) => {
     return result.rows;
 };
 
-const getTransactionsById = async (transactionId, userId) => {
+const getTransactionById = async (transactionId, userId) => {
     const result = await pool.query(
-        'select * from transactions where id = $1 and user_id = $2',
-        [transactionId, userId]
+        `select t.*, t.target_id
+        from transactions t
+        where t.id = $1 and t.user_id = $2`, [transactionId, userId]
     );
-    return result.rows[0];    
+    return result.rows[0];   
 };
 
 const updateTransaction = async (transactionId, userId, updates) => {
@@ -115,7 +116,7 @@ const deleteTransaction = async (transactionId, userId) => {
 module.exports = {
     createTransaction,
     getUserTransactions,
-    getTransactionsById,
+    getTransactionById,
     updateTransaction,
     deleteTransaction,
 };

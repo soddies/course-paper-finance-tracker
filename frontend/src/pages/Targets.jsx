@@ -145,6 +145,7 @@ const Targets = () => {
             if (!response.ok) {
                 throw new Error(data.error || 'Ошибка пополения');
             }
+
             await fetchTargets();
             setIsAddModal(false);
             setAddingTarget(null);

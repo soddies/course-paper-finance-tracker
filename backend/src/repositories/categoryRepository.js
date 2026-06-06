@@ -49,6 +49,13 @@ const getCategoryById = async (id, userId) => {
     return result.rows[0];
 } 
 
+const getSystemCategoryByName = async (name) => {
+    const result = await pool.query(
+        `select id from categories where name = $1 and is_system = true limit 1`, [name]
+    );
+    return result.rows[0];
+}
+
 const deleteCategory = async (id) => {
     await pool.query('delete from categories where id = $1', [id]);
 }
@@ -58,5 +65,6 @@ module.exports = {
     createCategory,
     deleteCategory,
     getCategoryStats,
-    getCategoryById
+    getCategoryById,
+    getSystemCategoryByName
 }

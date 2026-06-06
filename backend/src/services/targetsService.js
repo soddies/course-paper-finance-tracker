@@ -1,4 +1,6 @@
 const targetRepository = require('../repositories/targetsRepository');
+const transactionRepository = require('../repositories/transactionRepository');
+const categoryRepository = require('../repositories/categoryRepository');
 
 const getTargets = async (userId) => {
     return await targetRepository.getUserTargets(userId);
@@ -71,7 +73,25 @@ const addAmount = async (targetId, userId, amount) => {
         updates.status = 'completed';
     }
 
-    return await targetRepository.updateTarget(targetId, userId, updates);
+    const updatedTarget = await targetRepository.updateTarget(targetId, userId, updates);
+
+    const systemCategory = await categoryRepository.getSystemCategoryByName('Цели');
+    const categoryId = systemCategory?.id || null;
+
+    const description = `Цель: ${existingTarget.name}`;
+    const transactionDate = new Date().toISOString();
+
+    await transactionRepository.createTransaction(
+        userId,
+        'expense',
+        addValue,
+        categoryId,
+        description,
+        transactionDate,
+        targetId
+    );
+
+    return updatedTarget;
 };
 
 const deleteTarget = async (targetId, userId) => {
