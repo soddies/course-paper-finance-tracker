@@ -18,6 +18,7 @@ import UtilitiesIcon from '../../assets/images/category_icon/expense/utilities.s
 import TrashBasketIcon from '../../assets/images/category_icon/default/trash-basket.svg';
 import BatChartIcon from '../../assets/images/category_icon/default/bar-chart.svg';
 import PencilIcon from '../../assets/images/category_icon/default/pencil.svg';
+import targetIcon from '../../assets/images/category_icon/expense/target.svg';
 
 const TransactionItem = ({ transaction, onEdit, onDelete }) => {
     const formatDate = (dateString) => {
@@ -60,7 +61,8 @@ const TransactionItem = ({ transaction, onEdit, onDelete }) => {
             'Аренда жилья': RentHouseIcon,
             'Рестораны': RestaurantIcon,
             'Транспорт': TransportIcon,
-            'ЖКУ': UtilitiesIcon
+            'ЖКУ': UtilitiesIcon,
+            'Цели': targetIcon
         };
         
         const iconSrc = icons[name] || BatChartIcon;

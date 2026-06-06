@@ -17,6 +17,7 @@ import TransportIcon from '../../assets/images/category_icon/expense/transport.s
 import UtilitiesIcon from '../../assets/images/category_icon/expense/utilities.svg';
 import DefaultIcon from '../../assets/images/category_icon/default/folder.svg';
 import TrashBasketIcon from '../../assets/images/category_icon/default/trash-basket.svg';
+import targetIcon from '../../assets/images/category_icon/expense/target.svg';
 
 const CategoryItem = ({category, onDelete}) => {
     const getIcon = (iconName) => {
@@ -36,7 +37,8 @@ const CategoryItem = ({category, onDelete}) => {
             'rental-housing': <img src={RentHouseIcon} alt="" className="system-icon"/>,
             'restaurant': <img src={RestaurantIcon} alt="" className="system-icon"/>,
             'transport':<img src={TransportIcon} alt="" className="system-icon"/>,
-            'utilities': <img src={UtilitiesIcon} alt="" className="system-icon"/>
+            'utilities': <img src={UtilitiesIcon} alt="" className="system-icon"/>,
+            'target': <img src={targetIcon} alt="" className='system-icon'/>
         };
 
         return icons[iconName] || <img src={DefaultIcon} alt="" className="system-icon"/>
