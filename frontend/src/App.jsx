@@ -6,13 +6,7 @@ import Transactions from './pages/Transactions';
 import Categories from './pages/Categories';
 import Analytics from './pages/Analytics';
 import Targets from './pages/Targets';
-
-const PlaceholderPage = ({title}) => (
-  <div style={{padding: '40px', textAlign: 'center'}}>
-    <h1>{title}</h1>
-    <p>В разработке...</p>
-  </div>
-)
+import Profile from './pages/Profile';
 
 function App() {
   return (
@@ -25,7 +19,7 @@ function App() {
       <Route path="/categories" element={<Categories/>} />
       <Route path="/targets" element={<Targets />} />
       <Route path="/analytics" element={<Analytics />} />
-      <Route path="/profile" element={<PlaceholderPage title="Профиль" />} />
+      <Route path="/profile" element={<Profile />} />
     </Routes>
   );
 }
