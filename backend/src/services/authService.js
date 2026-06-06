@@ -42,7 +42,12 @@ const loginUser = async (email, password) => {
     };
 };
 
+const getUserById = async (userId) => {
+    return await authRepository.getUserById(userId);
+}
+
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    getUserById
 };

@@ -3,6 +3,7 @@ const router = express.Router();
 const authController = require('../controllers/authController');
 const {loginSchema, registerSchema} = require('../schemas/authSchema');
 const {validateRequest} = require('../middleware/validateMiddleware');
+const {authenticateToken} = require('../middleware/authMiddleware');
 
 /**
  * @swagger
@@ -121,5 +122,36 @@ router.post('/register', validateRequest(registerSchema), authController.registe
  *         description: Ошибка сервера
  */
 router.post('/login', validateRequest(loginSchema), authController.login);
+
+/**
+ * @swagger
+ * /api/auth/me:
+ *   get:
+ *     summary: Получить данные текущего пользователя
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Данные пользователя
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 1
+ *                 email:
+ *                   type: string
+ *                   example: user@example.com
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   example: 2026-01-15T10:30:00.000Z
+ *       401:
+ *         description: Неавторизован или невалидный токен
+ */
+router.get('/me', authenticateToken, authController.getMe);
 
 module.exports = router;

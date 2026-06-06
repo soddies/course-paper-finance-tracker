@@ -16,16 +16,16 @@ const createUser = async (email, passwordHash) => {
     return result.rows[0];
 }
 
-const searchById = async (id) => {
+const getUserById = async (userId) => {
     const result = await pool.query(
-        'select id, email from users where id = $1',
-        [id]
+        `select id, email, created_at from users where id = $1`,
+        [userId]
     );
     return result.rows[0];
-};
+}
 
 module.exports = {
     searchByEmail,
     createUser,
-    searchById
+    getUserById
 };
