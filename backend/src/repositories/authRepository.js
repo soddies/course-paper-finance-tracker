@@ -8,17 +8,24 @@ const searchByEmail = async (email) => {
     return result.rows[0];
 }
 
-const createUser = async (email, passwordHash) => {
+const searchByNickname = async (nickname) => {
     const result = await pool.query(
-        'insert into users (email, password_hash) values ($1, $2) returning id, email',
-        [email, passwordHash]
+        `select id, nickname from users where nickname = $1`, [nickname]
+    );
+    return result.rows[0];
+}
+
+const createUser = async (email, nickname, passwordHash) => {
+    const result = await pool.query(
+        'insert into users (email, nickname, password_hash) values ($1, $2, $3) returning id, email, nickname',
+        [email, nickname, passwordHash]
     );
     return result.rows[0];
 }
 
 const getUserById = async (userId) => {
     const result = await pool.query(
-        `select id, email, created_at from users where id = $1`,
+        `select id, email, nickname, created_at from users where id = $1`,
         [userId]
     );
     return result.rows[0];
@@ -27,5 +34,6 @@ const getUserById = async (userId) => {
 module.exports = {
     searchByEmail,
     createUser,
+    searchByNickname,
     getUserById
 };

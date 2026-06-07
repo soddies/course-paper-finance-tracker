@@ -10,6 +10,7 @@ const Auth = () => {
     
     const [formData, setFormData] = useState({
         email: '',
+        nickname: '',
         password: '',
         confirmPassword: ''
     });
@@ -48,6 +49,7 @@ const Auth = () => {
                 },
                 body: JSON.stringify({
                     email: formData.email,
+                    nickname: formData.nickname,
                     password: formData.password
                 })
             });
@@ -81,6 +83,16 @@ const Auth = () => {
                         value={formData.email}
                         onChange={handleChange}
                         placeholder="Введите ваш email"
+                        required
+                    />
+
+                    <InputField
+                        label="Никнейм"
+                        type="text"
+                        name="nickname"
+                        value={formData.nickname}
+                        onChange={handleChange}
+                        placeholder="Придумайте ник"
                         required
                     />
 

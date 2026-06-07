@@ -5,17 +5,21 @@ const authRepository = require('../repositories/authRepository');
 const JWT_SECRET = process.env.JWT_SECRET;
 const SALT_ROUNDS = 10;
 
-const registerUser = async (email, password) => {
+const registerUser = async (email, nickname, password) => {
     
     const existingUser = await authRepository.searchByEmail(email);
+    const existingNicknameUser = await authRepository.searchByNickname(nickname);
 
     if (existingUser) {
         throw new Error('Пользователь с таким Email уже есть!');
     }
+    if (existingNicknameUser) {
+        throw new Error('Пользователь с таким ником уже есть!');
+    }
 
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
 
-    return await authRepository.createUser(email, passwordHash);
+    return await authRepository.createUser(email, nickname, passwordHash);
 };
 
 const loginUser = async (email, password) => {
@@ -37,7 +41,7 @@ const loginUser = async (email, password) => {
     );
 
     return {
-        user: {id: user.id, email: user.email},
+        user: {id: user.id, email: user.email, nickname: user.nickname},
         token
     };
 };
