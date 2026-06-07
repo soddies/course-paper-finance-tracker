@@ -24,8 +24,10 @@ const getUserTransactions = async (userId, filters = {}) => {
     } = filters;
 
     let query = `
-        select t.id, t.type, t.amount, t.description, t.transaction_date, t.category_id, c.name as category_name, c.icon as category_icon from transactions t
-        left join categories c on c.id = t.category_id where t.user_id = $1
+        select t.id, t.type, t.amount, t.description, t.transaction_date, t.category_id, c.name as category_name, c.icon as category_icon, tg.name as target_name from transactions t
+        left join categories c on c.id = t.category_id
+        left join targets tg on tg.id = t.target_id 
+        where t.user_id = $1
     `;
     const queryParams = [userId];
     let paramIndex = 2;
@@ -43,9 +45,47 @@ const getUserTransactions = async (userId, filters = {}) => {
     }
 
     if (search && search.trim()) {
-        query += ` and (t.description ilike $${paramIndex} or c.name ilike $${paramIndex})`;
-        queryParams.push(`%${search.trim()}%`);
-        paramIndex++;
+        const searchWords = search.trim().split(/\s+/).filter(word => word.length > 0);
+        if (searchWords.length > 0) {
+            const amountWord = searchWords.find(word => !isNaN(parseFloat(word)) && parseFloat(word) > 0);
+            if (amountWord) {
+                const searchAmount = parseFloat(amountWord);
+                const textWords = searchWords.filter(word => word !== amountWord);
+
+                if (textWords.length > 0) {
+                    const textCondition = textWords.map((_, i) => {
+                        const wordParamIndex = paramIndex + i;
+                        return `(t.description ILIKE $${wordParamIndex} OR c.name ILIKE $${wordParamIndex} or tg.name ilike $${wordParamIndex})`;
+                    }).join(' or ');
+
+                    query += ` and ((${textCondition}) or t.amount = $${paramIndex + textWords.length})`;
+
+                    textWords.forEach(word => {
+                        queryParams.push(`%${word}%`);
+                    });
+                    queryParams.push(searchAmount);
+
+                    paramIndex += textWords.length + 1;
+                } else {
+                    query += ` and t.amount = $${paramIndex}`;
+                    queryParams.push(searchAmount);
+                    paramIndex++;
+                }
+            } else {
+                const condition = searchWords.map((_, i) => {
+                    const wordParamIndex = paramIndex + i;
+                    return `(t.description ILIKE $${wordParamIndex} OR c.name ILIKE $${wordParamIndex}) or tg.name ilike $${wordParamIndex}`;
+                }).join(' or ');
+
+                query += ` and ${condition}`;
+
+                searchWords.forEach(word => {
+                    queryParams.push(`%${word}%`);
+                });
+
+                paramIndex += searchWords.length;
+            }
+        }
     }
 
     if (dateFrom) {
