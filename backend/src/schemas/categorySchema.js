@@ -1,7 +1,7 @@
 const {z} = require("zod");
 
 const createCategorySchema = z.object({
-    name: z.string().min(1, 'Название категории обязательно').max(50, 'Название не более 50 симвлов').trim(),
+    name: z.string().min(1, 'Название категории обязательно').max(50, 'Название не более 50 символов').trim(),
     type: z.enum(['income', 'expense'], {
         error: 'Тип должен быть income или expense'
     }),
