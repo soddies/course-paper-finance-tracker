@@ -219,26 +219,3 @@
 .analytics-error button:hover {
     background: #06141B;
 }
-
-@media (max-width: 768px) {
-    .analytics-header {
-        flex-direction: column;
-    }
-
-    .analytics-filters {
-        width: 100%;
-        justify-content: space-between;
-    }
-
-    .stat-card-grid-analyze {
-        grid-template-columns: 1fr;
-    }
-
-    .chart-wrapper {
-        overflow-x: auto;
-    }
-
-    .day-column {
-        min-width: 25px;
-    }
-}

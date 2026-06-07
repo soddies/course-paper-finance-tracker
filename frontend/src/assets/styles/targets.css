@@ -634,14 +634,3 @@
     background: #1a2f3a;
 }
 
-@media (max-width: 768px) {
-    .modal-content-target,
-    .modal-content-amount {
-        padding: 24px 20px;
-        margin: 10px;
-    }
-    
-    .form-row-target {
-        grid-template-columns: 1fr;
-    }
-}

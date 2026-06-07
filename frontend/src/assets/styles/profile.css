@@ -371,18 +371,3 @@
     color: #ffffff;
     border: none;
 }
-
-@media (max-width: 768px) {
-    .profile-header {
-        flex-direction: column;
-    }
-    
-    .profile-info-card {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .stats-grid-profile {
-        grid-template-columns: 1fr;
-    }
-}

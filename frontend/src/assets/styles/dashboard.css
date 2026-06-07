@@ -265,21 +265,3 @@
 .dashboard-error button:hover {
     background: #06141B;
 }
-
-@media (max-width: 768px) {
-    .header {
-        padding: 0 20px;
-    }
-
-    .nav-menu {
-        display: none;
-    }
-
-    .balance-amount {
-        font-size: 36px;
-    }
-
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-}

@@ -353,15 +353,3 @@
 .categories-error button:hover {
     background: #06141B;
 }
-
-@media (max-width: 600px) {
-    .stats-cards {
-        grid-template-columns: 1fr;
-    }
-    
-    .categories-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
-    }
-}
