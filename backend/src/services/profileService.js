@@ -1,4 +1,5 @@
 const profileRepository = require('../repositories/profileRepository');
+const authRepository = require('../repositories/authRepository');
 const bcrypt = require('bcryptjs');
 
 const getUserStats = async (userId) => {
@@ -42,8 +43,18 @@ const updatePassword = async (userId, oldPassword, newPassword) => {
     return await profileRepository.updateUserPassword(userId, passwordHash);
 }
 
+const updateNickname = async (userId, nickname) => {
+    const existingNickname = await authRepository.searchByNickname(nickname);
+    if (existingNickname && existingNickname.id !== userId) {
+        throw new Error('Пользователь с таким ником уже есть');
+    }
+
+    return await profileRepository.updateNicknameUser(userId, nickname);
+}
+
 module.exports = {
     getUserStats,
     updateEmail,
-    updatePassword
+    updatePassword,
+    updateNickname
 };

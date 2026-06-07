@@ -21,6 +21,13 @@ const updateUserPassword = async (userId, passwordHash) => {
     return true;
 };
 
+const updateNicknameUser = async (userId, nickname) => {
+    const result = await pool.query(
+        `update users set nickname = $1 where id = $2 returning id, email, nickname`, [nickname, userId]
+    );
+    return result.rows[0];
+}
+
 const getUserById = async (userId) => {
     const result = await pool.query(
         `select id, email, password_hash, created_at from users where id = $1`,
@@ -42,5 +49,6 @@ module.exports = {
     findUserByEmail,
     updateUserEmail,
     updateUserPassword,
+    updateNicknameUser,
     getUserById
 };

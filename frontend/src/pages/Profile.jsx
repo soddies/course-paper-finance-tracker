@@ -67,6 +67,15 @@ const Profile = () => {
         if (updatedData?.email) {
             setUserData(prev => ({...prev, email: updatedData.email}));
         }
+        if (updatedData?.nickname) {
+        setUserData(prev => ({ ...prev, nickname: updatedData.nickname }));
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+            const user = JSON.parse(userStr);
+            user.nickname = updatedData.nickname;
+            localStorage.setItem('user', JSON.stringify(user));
+        }
+    }
     }
 
     const formatCurrency = (amount) => {
@@ -161,6 +170,10 @@ const Profile = () => {
                         <div className="profile-details-item">
                             <span className="detail-label">Электронная почта:</span>
                             <span className="detail-value">{userData?.email || 'Не указано'}</span>
+                        </div>
+                        <div className="profile-details-item">
+                            <span className="detail-label">Никнейм:</span>
+                            <span className="detail-value">{userData?.nickname || 'Не указано'}</span>
                         </div>
                         <div className="profile-details-item">
                             <span className="detail-label">Дата регистрации:</span>

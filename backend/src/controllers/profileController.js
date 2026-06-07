@@ -45,8 +45,22 @@ const updatePassword = async (req, res) => {
     }
 };
 
+const updateNickname = async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const {nickname} = req.body;
+
+        const user = await profileService.updateNickname(userId, nickname);
+        res.status(200).json(user);
+    } catch (error) {
+        console.error('Update nickname error: ', error);
+        res.status(400).json({error: error.message});
+    }
+};
+
 module.exports = {
     getUserStats,
     updateEmail,
-    updatePassword
+    updatePassword,
+    updateNickname
 };

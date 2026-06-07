@@ -27,6 +27,9 @@ const ProfileHeader = ({onEdit}) => {
                         <button className="dropdown-item-profile" onClick={() => handleSelect('password')}>
                             Изменить пароль
                         </button>
+                         <button className="dropdown-item-profile" onClick={() => handleSelect('nickname')}>
+                            Изменить никнейм
+                        </button>
                     </div>
                 )}
             </div>
