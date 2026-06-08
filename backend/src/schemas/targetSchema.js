@@ -1,7 +1,13 @@
 const {z} = require('zod');
+const { containsProfanity } = require('../utils/profanityFilter');
 
 const createTargetSchema = z.object({
-    name: z.string().min(1, 'Название обязательно').max(50, 'Слишком длинное название').trim(),
+    name: z.string().min(1, 'Название обязательно').max(50, 'Слишком длинное название').trim()
+        .refine(
+            (val) => !val || !containsProfanity(val), {
+                message: 'Название цели содержит недопустимые слова'
+            } 
+        ),
     target_amount: z.number().positive('Сумма должна быть положительной'),
     current_amount: z.number().min(0, 'Текущая сумма не может быть отрицательной').default(0),
     deadline: z.string().nullable().optional(),
@@ -9,7 +15,12 @@ const createTargetSchema = z.object({
 });
 
 const updateTargetSchema = z.object({
-    name: z.string().min(1).max(50).trim().optional(),
+    name: z.string().min(1).max(50).trim().optional()
+        .refine(
+            (val) => !val || !containsProfanity(val), {
+                message: 'Название цели содержит недопустимые слова'
+            } 
+        ),
     target_amount: z.number().positive().optional(),
     current_amount: z.number().min(0).optional(),
     deadline: z.string().nullable().optional(),

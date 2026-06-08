@@ -1,4 +1,5 @@
 const {z} = require('zod');
+const {containsProfanity} = require('../utils/profanityFilter');
 
 const createTransactionSchema = z.object({
     type: z.enum(['income', 'expense'], {
@@ -10,14 +11,18 @@ const createTransactionSchema = z.object({
         z.number().positive('Сумма должна быть больше 0')
     ]).transform(val => parseFloat(val)),
 
-    categoryId: z.union([
-        z.string().regex(/^\d+$/).transform(val => parseInt(val)),
+    categoryId: z.union([z.string().regex(/^\d+$/).transform(val => parseInt(val)),
         z.number().int().positive(),
         z.null(),
         z.undefined()
     ]).optional().nullable(),
 
-    description: z.string().max(500, 'Описание не более 500 символов!').optional().nullable(),
+    description: z.string().max(500, 'Описание слишком длинное').optional()
+        .refine(
+            (val) => !containsProfanity(val), {
+                message: 'Описание содержит недопустимые слова'
+            } 
+        ),
 
     transactionDate: z.union([
         z.string().datetime({message: 'Неверный формат даты'}),

@@ -1,7 +1,13 @@
 const {z} = require("zod");
+const { containsProfanity } = require('../utils/profanityFilter');
 
 const createCategorySchema = z.object({
-    name: z.string().min(1, 'Название категории обязательно').max(50, 'Название не более 50 символов').trim(),
+    name: z.string().min(1, 'Название категории обязательно').max(50, 'Название не более 50 символов').trim()
+        .refine(
+            (val) => !containsProfanity(val), {
+                message: 'Название содержит недопустимые слова'
+            } 
+        ),
     type: z.enum(['income', 'expense'], {
         error: 'Тип должен быть income или expense'
     }),
