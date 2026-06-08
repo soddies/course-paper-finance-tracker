@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import { useProfanityCheck } from '../../hooks/useProfanityCheck';
 import carIcon from '../../assets/images/targets_icon/car.svg';
 import giftIcon from '../../assets/images/targets_icon/gift.svg';
 import houseIcon from '../../assets/images/targets_icon/house.svg';
@@ -23,6 +24,8 @@ const targetIcons = {
 };
 
 const TargetModal = ({target, onClose, onSave}) => {
+    const {profanityError, checkText, clearError} = useProfanityCheck();
+
     const [formData, setFormData] = useState({
         name: '',
         target_amount: '',
@@ -31,9 +34,13 @@ const TargetModal = ({target, onClose, onSave}) => {
         icon: 'target'
     });
 
+    const [error, setError] = useState('');
+
     const today = new Date().toISOString().split('T')[0];
 
     useEffect(() => {
+        setError('');
+        clearError();
         if (target) {
             setFormData({
                 name: target.name || '',
@@ -42,18 +49,29 @@ const TargetModal = ({target, onClose, onSave}) => {
                 deadline: target.deadline ? target.deadline.split('T')[0] : '',
                 icon: target.icon || 'target'
             });
+            if (target.name) {
+                checkText(target.name, 'Название цели');
+            } else {
+                clearError();
+            }
         } else {
             setFormData(prev => ({
                 ...prev,
                 deadline: today
             }));
+            clearError();
         }
     }, [target]);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
+        if (!checkText(formData.name, 'Название цели')) {
+            return;
+        }
+
         if (!formData.name.trim() || !formData.target_amount) {
-            alert('Заполните обязательные поля!');
+            setError('Заполните обязательные поля!');
             return;
         }
 
@@ -63,7 +81,7 @@ const TargetModal = ({target, onClose, onSave}) => {
             today.setHours(0,0,0,0);
 
             if (deadlineDate < today) {
-                alert('Дедлайн не может быть в прошлом! Выберите будущую дату');
+                setError('Дедлайн не может быть в прошлом! Выберите будущую дату');
                 return;
             }
         }
@@ -76,8 +94,19 @@ const TargetModal = ({target, onClose, onSave}) => {
             icon: formData.icon || 'target'
         };
         
-        onSave(target ? target.id : null, payload); 
+        try {
+            await onSave(target ? target.id : null, payload); 
+            onClose();
+        } catch (err) {
+            setError(err.message || 'Ошибка при сохранении');
+        }
     };
+
+    const handleNameChange = (e) => {
+        const value = e.target.value;
+        setFormData({...formData, name: value});
+        checkText(value, 'Название цели');
+    }
 
     const iconKeys = Object.keys(targetIcons);
 
@@ -89,15 +118,28 @@ const TargetModal = ({target, onClose, onSave}) => {
                     <button className="modal-close-target" onClick={onClose}>✕</button>
                 </div>
 
+                {error && (
+                    <div className="alert-target alert-error-target">
+                        {error}
+                    </div>
+                )}
+
+                {profanityError && (
+                    <div className="alert-target alert-error-target">
+                        {profanityError}
+                    </div>
+                )}
+
                 <form onSubmit={handleSubmit} className='target-form'>
                     <div className="form-group-target">
                         <label>Название цели *</label>
                         <input 
                             type="text"
                             value={formData.name}
-                            onChange={(e) => setFormData({...formData, name: e.target.value})}
+                            onChange={handleNameChange}
                             placeholder='Например: квартира в центре Москвы'
                             required 
+                            className={profanityError ? 'input-error' : ''}
                         />
                     </div>
 
@@ -139,14 +181,14 @@ const TargetModal = ({target, onClose, onSave}) => {
                     <div className="form-group-target">
                         <label>Иконка</label>
                         <div className="icon-picker">
-                            {iconKeys.map((iconKeys) => {
-                                const iconSrc = targetIcons[iconKeys];
+                            {iconKeys.map((iconKey) => {
+                                const iconSrc = targetIcons[iconKey];
                                 return (
                                     <button 
-                                        key={iconKeys} 
+                                        key={iconKey} 
                                         type='button' 
-                                        className={`icon-option ${formData.icon === iconKeys ? 'selected' : ''}`} 
-                                        onClick={() => setFormData({...formData, icon: iconKeys})}>
+                                        className={`icon-option ${formData.icon === iconKey ? 'selected' : ''}`} 
+                                        onClick={() => setFormData({...formData, icon: iconKey})}>
                                             <img src={iconSrc} className='icon-svg-target' />
                                         </button>
                                     );
@@ -155,7 +197,7 @@ const TargetModal = ({target, onClose, onSave}) => {
                     </div>
                     <div className="form-action-target">
                         <button type='button' className='btn-cancel-target' onClick={onClose}>Отмена</button>
-                        <button type='submit' className='btn-submit-target'>{target ? 'Сохранить' : 'Создать'}</button>
+                        <button type='submit' className='btn-submit-target' disabled={!!profanityError}>{target ? 'Сохранить' : 'Создать'}</button>
                     </div>
                 </form>
             </div>

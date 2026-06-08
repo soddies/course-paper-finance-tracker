@@ -32,7 +32,8 @@ const Targets = () => {
             if (response.ok) {
                 setTargets(data);
             } else {
-                throw new Error(data.error || 'Ошибка загрузки');
+                const errorMessage = data.details?.[0]?.message || data.error || 'Ошибка загрузки';
+                throw new Error(errorMessage);
             }
         } catch (err) {
             console.error('Fetch target error: ', err);
@@ -57,7 +58,8 @@ const Targets = () => {
 
             const data = await response.json();
             if (!response.ok) {
-                throw new Error(data.error || 'Ошибка создания');
+                const errorMessage = data.details?.[0]?.message || data.error || 'Ошибка создания';
+                throw new Error(errorMessage);
             }
 
             await fetchTargets();
@@ -66,7 +68,7 @@ const Targets = () => {
         } catch (err) {
             console.error('Create target error: ', err);
             setError(err.message);
-            alert(err.message);
+            throw err;
         }
     };
 
@@ -86,7 +88,8 @@ const Targets = () => {
 
             const data = await response.json();
             if (!response.ok) {
-                throw new Error(data.error || 'Ошибка обновления');
+                const errorMessage = data.details?.[0]?.message || data.error || 'Ошибка обновления';
+                throw new Error(errorMessage);
             }
 
             await fetchTargets();
@@ -95,7 +98,7 @@ const Targets = () => {
         } catch (err) {
             console.error('Update target error: ', err);
             setError(err.message);
-            alert(err.message);
+            throw err;
         }
     };
 
@@ -117,13 +120,14 @@ const Targets = () => {
 
             const data = await response.json();
             if (!response.ok) {
-                throw new Error(data.error || 'Ошибка удаления');
+                const errorMessage = data.details?.[0]?.message || data.error || 'Ошибка удаления';
+                throw new Error(errorMessage);
             }
             await fetchTargets();
         } catch (err) {
             console.error('Delete target error: ', err);
-            setError(err.message);
-            alert(err.message);
+            setError(err.message); 
+            throw err;
         }
     };
 
@@ -143,16 +147,16 @@ const Targets = () => {
 
             const data = await response.json();
             if (!response.ok) {
-                throw new Error(data.error || 'Ошибка пополения');
+                const errorMessage = data.details?.[0]?.message || data.error || 'Ошибка пополнения';
+                throw new Error(errorMessage);
             }
-
             await fetchTargets();
             setIsAddModal(false);
             setAddingTarget(null);
         } catch (err) {
             console.error('Add amount error: ', err);
             setError(err.message);
-            alert(err.message);
+            throw err;
         }
     };
 
@@ -173,13 +177,15 @@ const Targets = () => {
 
             const data = await response.json();
             if (!response.ok) {
-                throw new Error(data.error || 'Ошибка изменения статуса');
+                const errorMessage = data.details?.[0]?.message || data.error || 'Ошибка смены статуса';
+                throw new Error(errorMessage);
             }
 
             await fetchTargets();
         } catch (err) {
             console.error('Toggle status error: ', err);
-            alert(err.message);
+            setError(err.message);
+            throw err;
         } 
     };
 

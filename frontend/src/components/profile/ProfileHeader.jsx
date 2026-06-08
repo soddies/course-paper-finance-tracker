@@ -17,7 +17,7 @@ const ProfileHeader = ({onEdit}) => {
             </div>
             <div className="profile-actions">
                 <button className='btn-edit-profile' onClick={() => setDropdownOpen(!dropdownOpen)} aria-expanded={dropdownOpen} aria-haspopup="true">
-                    Изменить данные
+                    Управление данными
                 </button>
                 {dropdownOpen && (
                     <div className="dropdown-menu-profile">

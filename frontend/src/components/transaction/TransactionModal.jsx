@@ -1,7 +1,10 @@
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react';
+import { useProfanityCheck } from '../../hooks/useProfanityCheck';
 
-const TransactionModal = ({isOpen, onClose, type, transaction, onTransactionUpdate}) => {
+const TransactionModal = ({ isOpen, onClose, type, transaction, onTransactionUpdate }) => {
     const isEditing = !!transaction;
+
+    const { profanityError, checkText, clearError } = useProfanityCheck();
 
     const [formData, setFormData] = useState({
         category: '',
@@ -16,16 +19,12 @@ const TransactionModal = ({isOpen, onClose, type, transaction, onTransactionUpda
     const [error, setError] = useState('');
 
     const formatForInput = (dateString) => {
-        if (!dateString) {
-            return ''
-        };
-
+        if (!dateString) return '';
         const date = new Date(dateString);
         const offset = date.getTimezoneOffset() * 60000;
         const localDate = new Date(date.getTime() - offset);
         return localDate.toISOString().slice(0, 16);
-
-    }
+    };
 
     useEffect(() => {
         if (!isOpen) return;
@@ -36,9 +35,7 @@ const TransactionModal = ({isOpen, onClose, type, transaction, onTransactionUpda
                 if (!token) return;
 
                 const response = await fetch(`http://localhost:3000/api/categories?type=${type}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
 
                 const data = await response.json();
@@ -56,13 +53,21 @@ const TransactionModal = ({isOpen, onClose, type, transaction, onTransactionUpda
     }, [isOpen, type]);
 
     useEffect(() => {
+        setError('');
+        clearError();
+        
         if (isEditing && transaction) {
             setFormData({
                 category: transaction.category_id || '',
                 amount: transaction.amount || '',
-                date: transaction.transaction_date ? formatForInput(transaction.transaction_date) : formatForInput(new Date().toISOString()),
+                date: transaction.transaction_date 
+                    ? formatForInput(transaction.transaction_date) 
+                    : formatForInput(new Date().toISOString()),
                 description: transaction.description || ''
             });
+            if (transaction.description) {
+                checkText(transaction.description, 'Описание');
+            }
         } else if (!isEditing) {
             setFormData({
                 category: '',
@@ -78,7 +83,7 @@ const TransactionModal = ({isOpen, onClose, type, transaction, onTransactionUpda
             if (e.key === 'Escape') onClose();
         };
         if (isOpen) window.addEventListener('keydown', handleEsc);
-        return () => window.removeEventListener('keydown', handleEsc); 
+        return () => window.removeEventListener('keydown', handleEsc);
     }, [isOpen, onClose]);
 
     if (!isOpen) return null;
@@ -86,6 +91,11 @@ const TransactionModal = ({isOpen, onClose, type, transaction, onTransactionUpda
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+
+        if (!checkText(formData.description, 'Описание')) {
+            return;
+        }
+
         setLoading(true);
 
         try {
@@ -122,7 +132,8 @@ const TransactionModal = ({isOpen, onClose, type, transaction, onTransactionUpda
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || 'Ошибка');
+                const errorMessage = data.details?.[0]?.message || data.error || 'Ошибка при сохранении';
+                throw new Error(errorMessage);
             }
 
             if (onTransactionUpdate) {
@@ -139,8 +150,12 @@ const TransactionModal = ({isOpen, onClose, type, transaction, onTransactionUpda
     };
 
     const handleChange = (e) => {
-        const {name, value} = e.target;
-        setFormData(prev => ({...prev, [name]: value}));
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+
+        if (name === 'description') {
+            checkText(value, 'Описание');
+        }
     };
 
     return (
@@ -148,21 +163,31 @@ const TransactionModal = ({isOpen, onClose, type, transaction, onTransactionUpda
             <div className="modal-content" onClick={e => e.stopPropagation()}>
                 <div className="modal-header">
                     <h2 className='modal-title'>
-                        {isEditing ? `Редактировать ${type === 'income' ? 'доход' : 'расход'}` 
-                        : `Добавить ${type === 'income' ? 'доход' : 'расход'} `}
+                        {isEditing ? `Редактировать ${type === 'income' ? 'доход' : 'расход'}`
+                            : `Добавить ${type === 'income' ? 'доход' : 'расход'}`}
                     </h2>
                     <button className="modal-close-btn" onClick={onClose}>✕</button>
                 </div>
 
-                {error && <div style={{color: '#0b0e14', marginBottom: '15px'}}>{error}</div>}
+                {error && (
+                    <div className="alert alert-error">
+                        {error}
+                    </div>
+                )}
+
+                {profanityError && (
+                    <div className="alert alert-error">
+                        {profanityError}
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit}>
                     <div className="transaction-form-group">
                         <label className="transaction-label">Категория *</label>
                         {loadingCategories ? (
-                            <p style={{color: '#999'}}>Загрузка категорий...</p>
+                            <p style={{ color: '#999' }}>Загрузка категорий...</p>
                         ) : (
-                            <select 
+                            <select
                                 name="category"
                                 value={formData.category}
                                 onChange={handleChange}
@@ -180,7 +205,7 @@ const TransactionModal = ({isOpen, onClose, type, transaction, onTransactionUpda
                     <div className="transaction-form-group">
                         <label className="transaction-label">Сумма *</label>
                         <input
-                            type="number" 
+                            type="number"
                             name="amount"
                             value={formData.amount}
                             onChange={handleChange}
@@ -194,7 +219,7 @@ const TransactionModal = ({isOpen, onClose, type, transaction, onTransactionUpda
                     <div className="transaction-form-group">
                         <label className="transaction-label">Дата и время *</label>
                         <input
-                            type="datetime-local" 
+                            type="datetime-local"
                             name="date"
                             value={formData.date}
                             onChange={handleChange}
@@ -210,16 +235,31 @@ const TransactionModal = ({isOpen, onClose, type, transaction, onTransactionUpda
                             value={formData.description}
                             onChange={handleChange}
                             placeholder='Например: чаевые или обед в спаре...'
-                            className="transaction-textarea" 
+                            className={`transaction-textarea ${profanityError ? 'input-error' : ''}`}
                         ></textarea>
-                        <span className='hint-text'>Необязательно</span>
-                    </div>  
+                        <span className="hint-text">
+                            Необязательно
+                        </span>
+                    </div>
 
-                    <div className="modal-action" style={{display: 'flex', gap: '10px', marginTop: '20px'}}>
-                        <button type="submit" className='btn-submit' disabled={loading || loadingCategories} style={{opacity: (loading || loadingCategories) ? 0.7 : 1}}>
+                    <div className="modal-action" style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                        <button
+                            type="submit"
+                            className='btn-submit'
+                            disabled={loading || loadingCategories}
+                            style={{opacity: (loading || loadingCategories) ? 0.7 : 1}}>
+                        
                             {loading ? "Сохранение..." : (isEditing ? 'Обновить' : 'Добавить транзакцию')}
+
                         </button>
-                        <button type="button" className='btn-cancel' onClick={onClose} disabled={loading}>Отмена</button>
+                        <button
+                            type="button"
+                            className='btn-cancel'
+                            onClick={onClose}
+                            disabled={loading}
+                        >
+                            Отмена
+                        </button>
                     </div>
                 </form>
             </div>

@@ -83,7 +83,8 @@ const ProfileModal = ({type, onClose, onSave}) => {
 
                 onSave(data);
             } else {
-                throw new Error(data.error || 'Ошибка при обновлении');
+                const errorMessage = data.details?.[0]?.message || data.error || 'Ошибка при обновлении';
+                throw new Error(errorMessage);
             }
         } catch (err) {
             setError(err.message);

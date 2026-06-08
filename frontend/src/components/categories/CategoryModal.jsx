@@ -1,19 +1,38 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
+import { useProfanityCheck } from '../../hooks/useProfanityCheck';
 
-const CategoryModal = ({isOpen, onClose, defaultType, onCategoryAdded}) => {
+const CategoryModal = ({ isOpen, onClose, defaultType, onCategoryAdded }) => {
+    const { profanityError, checkText, clearError } = useProfanityCheck();
+
     const [type, setType] = useState(defaultType || 'income');
     const [name, setName] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
+    useEffect(() => {
+        if (isOpen) {
+            setName('');
+            setError('');
+            clearError();
+            setType(defaultType || 'income');
+        }
+    }, [isOpen]);
+
     if (!isOpen) return null;
 
-    const handlerSubmit = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!name.trim()) return;
+        setError('');
+
+        if (!name.trim()) {
+            return;
+        }
+
+        if (!checkText(name, 'Название категории')) {
+            return;
+        }
 
         setLoading(true);
-        setError('');
 
         try {
             const token = localStorage.getItem('token');
@@ -23,19 +42,30 @@ const CategoryModal = ({isOpen, onClose, defaultType, onCategoryAdded}) => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({name, type})
+                body: JSON.stringify({ name: name.trim(), type })
             });
 
             const data = await response.json();
-            if (!response.ok) throw new Error(data.error);
+            
+            if (!response.ok) {
+                const errorMessage = data.details?.[0]?.message || data.error || 'Ошибка создания';
+                throw new Error(errorMessage);
+            }
 
             onCategoryAdded();
             setName('');
+            onClose(); 
         } catch (err) {
             setError(err.message);
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleNameChange = (e) => {
+        const value = e.target.value;
+        setName(value);
+        checkText(value, 'Название категории');
     };
 
     return (
@@ -46,14 +76,30 @@ const CategoryModal = ({isOpen, onClose, defaultType, onCategoryAdded}) => {
                     <button onClick={onClose}>✕</button>
                 </div>
 
-                <form onSubmit={handlerSubmit}>
+                {error && <div className="alert alert-error">{error}</div>}
+                
+                {profanityError && (
+                    <div className="alert-category alert-error-category">
+                        {profanityError}
+                    </div>
+                )}
+
+                <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label>Тип категории</label>
                         <div className="type-selector">
-                            <button type="button" className={`type-btn ${type === 'income' ? 'active income' : ''}`} onClick={() => setType('income')}>
+                            <button
+                                type="button"
+                                className={`type-btn ${type === 'income' ? 'active income' : ''}`}
+                                onClick={() => setType('income')}
+                            >
                                 Доход
                             </button>
-                            <button type="button" className={`type-btn ${type === 'expense' ? 'active expense' : ''}`} onClick={() => setType('expense')}>
+                            <button
+                                type="button"
+                                className={`type-btn ${type === 'expense' ? 'active expense' : ''}`}
+                                onClick={() => setType('expense')}
+                            >
                                 Расход
                             </button>
                         </div>
@@ -61,16 +107,34 @@ const CategoryModal = ({isOpen, onClose, defaultType, onCategoryAdded}) => {
 
                     <div className="form-group">
                         <label>Название *</label>
-                        <input type="text" value={name} onChange={(e) => setName(e.target.value)}
-                        placeholder='Название вашей категории' required/>
+                        <input
+                            type="text"
+                            value={name}
+                            onChange={handleNameChange} 
+                            placeholder='Название вашей категории'
+                            required
+                            className={profanityError ? 'input-error' : ''} 
+                        />
                     </div>
-                    {error && <div className='error-msg'>{error}</div>}
 
                     <div className="modal-actions">
-                        <button type="submit" className='btn-primary-modal' disabled={loading}>
+                        <button
+                            type="submit"
+                            className='btn-primary-modal'
+                            disabled={loading || !!profanityError}
+                            style={{
+                                opacity: (loading || profanityError) ? 0.5 : 1,
+                                cursor: (loading || profanityError) ? 'not-allowed' : 'pointer'
+                            }}
+                        >
                             {loading ? 'Сохранение...' : 'Добавить'}
                         </button>
-                        <button type="button" className='btn-secondary-modal' onClick={onClose}>
+                        <button
+                            type="button"
+                            className='btn-secondary-modal'
+                            onClick={onClose}
+                            disabled={loading}
+                        >
                             Отмена
                         </button>
                     </div>
