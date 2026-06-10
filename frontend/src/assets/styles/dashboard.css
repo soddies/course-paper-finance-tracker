@@ -50,14 +50,33 @@
     color: #11212D;
 }
 
+.admin-link {
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #5a6c7d;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.admin-link:hover {
+    background-color: #eaecec;
+    color: #11212D;
+}
+
+.admin-link.active {
+    background-color: #eaecec;
+    color: #11212D;
+}
+
 .nav-logout {
     margin-left: 20px;
-    color: #e74c3c;
+    color: #11212D;
 }
 
 .nav-logout:hover {
-    background-color: #fee;
-    color: #c0392b;
+    background-color: #eaecec;
+    color: #11212D;
 }
 
 .dashboard-content {
