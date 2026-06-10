@@ -7,6 +7,7 @@ import Categories from './pages/Categories';
 import Analytics from './pages/Analytics';
 import Targets from './pages/Targets';
 import Profile from './pages/Profile';
+import AdminPanel from './pages/AdminPanel';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
       <Route path="/targets" element={<Targets />} />
       <Route path="/analytics" element={<Analytics />} />
       <Route path="/profile" element={<Profile />} />
+      <Route path="/admin" element={<AdminPanel/>}/>
     </Routes>
   );
 }

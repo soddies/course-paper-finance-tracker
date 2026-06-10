@@ -2,7 +2,7 @@ const pool = require('../config/database');
 
 const searchByEmail = async (email) => {
     const result = await pool.query(
-        'select id, email, password_hash from users where email = $1',
+        'select id, email, password_hash, role from users where email = $1',
         [email]
     );
     return result.rows[0];
@@ -25,7 +25,7 @@ const createUser = async (email, nickname, passwordHash) => {
 
 const getUserById = async (userId) => {
     const result = await pool.query(
-        `select id, email, nickname, created_at from users where id = $1`,
+        `select id, email, nickname, created_at, role from users where id = $1`,
         [userId]
     );
     return result.rows[0];
