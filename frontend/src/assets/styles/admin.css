@@ -135,8 +135,8 @@
 }
 
 .alert-error {
-    background-color: #cccccc;
-    color: #000000;
-    border: 1px solid #9BA8AB;
+    background: #11212D; 
+    color: #ffffff;
+    border: none;
 }
 
