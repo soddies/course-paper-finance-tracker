@@ -1,10 +1,11 @@
 const targetService = require('../services/targetsService');
+const {toTargetResponse, toTargetListResponse} = require('../DTO/targetDto');
 
 const getTargets = async (req, res) => {
     try {
         const userId = req.user.userId;
         const targets = await targetService.getTargets(userId);
-        res.status(200).json(targets);
+        res.status(200).json(toTargetListResponse(targets));
     } catch (error) {
         console.error('Get targets error: ', error);
         res.status(500).json({error: 'Ошибка сервера'});
@@ -17,7 +18,7 @@ const createTarget = async (req, res) => {
         const targetData = req.body;
 
         const newTarget = await targetService.createTarget(userId, targetData);
-        res.status(201).json(newTarget);
+        res.status(201).json(toTargetResponse(newTarget));
     } catch (error) {
         console.error('Create target error: ', error);
         res.status(500).json({error: error.message});
@@ -32,7 +33,7 @@ const updateTarget = async (req, res) => {
 
         const targetId = parseInt(id);
         const updatedTarget = await targetService.updateTarget(targetId, userId, updates);
-        res.status(200).json(updatedTarget);
+        res.status(200).json(toTargetResponse(updatedTarget));
     } catch (error) {
         console.error('Update target error: ', error);
         if (error.message === 'NOT_FOUND') {
@@ -52,7 +53,7 @@ const addAmount = async (req, res) => {
         if (!updatedTarget) {
             return res.status(404).json({error: 'Цель не найдена'});
         }
-        res.status(200).json(updatedTarget);
+        res.status(200).json(toTargetResponse(updatedTarget));
     } catch (error) {
         console.error('Add amount error: ', error);
         if (error.message === 'NOT_FOUND') {
@@ -79,7 +80,7 @@ const togglePause = async (req, res) => {
             return res.status(404).json({error: 'Цель не найдена'});
         }
 
-        res.status(200).json(updatedTarget);
+        res.status(200).json(toTargetResponse(updatedTarget));
     } catch (error) {
         console.error('Toggle pause error: ', error);
         res.status(400).json({error: error.message});

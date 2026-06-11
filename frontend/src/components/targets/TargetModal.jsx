@@ -44,8 +44,8 @@ const TargetModal = ({target, onClose, onSave}) => {
         if (target) {
             setFormData({
                 name: target.name || '',
-                target_amount: target.target_amount || '',
-                current_amount: target.current_amount || '',
+                target_amount: target.targetAmount || '',
+                current_amount: target.currentAmount || '',
                 deadline: target.deadline ? target.deadline.split('T')[0] : '',
                 icon: target.icon || 'target'
             });

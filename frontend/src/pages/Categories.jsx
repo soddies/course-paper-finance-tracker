@@ -77,7 +77,7 @@ const Categories = () => {
         } catch (err) {
             console.error('Ошибка удаления: ', err);
             setError(err.message);
-            alert('Ошибка удаления категории: ', err.message);
+            throw err;
         }
     };
 

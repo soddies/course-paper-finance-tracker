@@ -1,4 +1,5 @@
 const authService = require('../services/authService');
+const {toUserResponse} = require('../DTO/userDto');
 
 const register = async (req, res) => {
     try {
@@ -8,7 +9,7 @@ const register = async (req, res) => {
 
         res.status(201).json({
             message: 'Регистрация успешна',
-            user
+            user: toUserResponse(user)
         });
     } catch (error) {
         console.log(`Ошибка регистрации: ${error}`);
@@ -24,7 +25,8 @@ const login = async (req, res) => {
 
         res.status(200).json({
             message: 'Вход выполнен успешно',
-            ...result
+            user: toUserResponse(result.user),
+            token: result.token
         });
     } catch (error) {
         console.log(`Ошибка входа: ${error}`);
@@ -41,12 +43,7 @@ const getMe = async (req, res) => {
             return res.status(404).json({error: 'Пользователь не найден'});
         }
 
-        res.status(200).json({
-            id: user.id,
-            email: user.email,
-            nickname: user.nickname,
-            createdAt: user.created_at
-        });
+        res.status(200).json(toUserResponse(user));
     } catch (error) {
         console.error('Get me error', error);
         res.status(500).json({error: 'Ошибка сервера'});

@@ -28,9 +28,8 @@ const targetIcons = {
 };
 
 const TargetCard = ({target, onEdit, onDelete, onAddAmount, onTogglePause}) => {
-    const rawProgress = target.current_amount > 0 ? (parseFloat(target.current_amount) / parseFloat(target.target_amount)) * 100 : 0;
-    const displayProgress = Math.min(rawProgress, 100);
-    const isCompleted = rawProgress >= 100;
+    const displayProgress = target.progress !== undefined ? target.progress : (target.currentAmount > 0 ? Math.min((parseFloat(target.currentAmount) / parseFloat(target.targetAmount)) * 100, 100) : 0);
+    const isCompleted = displayProgress >= 100;
     const isPaused = target.status === 'paused';
     const daysLeft = target.deadline ? Math.ceil((new Date(target.deadline) - new Date()) / (1000 * 60 * 60 * 24)) : null;
     const iconSrc = targetIcons[target.icon] || targetIcons.target;
@@ -75,8 +74,8 @@ const TargetCard = ({target, onEdit, onDelete, onAddAmount, onTogglePause}) => {
                     <div className={`progress-fill ${isCompleted ? 'completed' : ''}`} style={{width: `${displayProgress}%`}}/>
                 </div>
                 <div className="progress-stats">
-                    <span className="current">{parseFloat(target.current_amount).toLocaleString('ru-RU')} ₽</span>
-                    <span className="target">из {parseFloat(target.target_amount).toLocaleString('ru-RU')} ₽</span>
+                    <span className="current">{parseFloat(target.currentAmount).toLocaleString('ru-RU')} ₽</span>
+                    <span className="target">из {parseFloat(target.targetAmount).toLocaleString('ru-RU')} ₽</span>
                     <span className="percentage">{displayProgress.toFixed(1)}%</span>
                 </div>
             </div>

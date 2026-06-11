@@ -1,9 +1,10 @@
+const { toAdminResponse, toUsersListResponse } = require('../DTO/userDto');
 const adminRepository = require('../repositories/adminRepository');
 
 const getAllUsers = async (req, res) => {
     try {
         const users = await adminRepository.getAllUsers();
-        res.status(200).json(users);
+        res.status(200).json(toUsersListResponse(users));
     } catch (error) {
         console.error('Get all users error: ', error);
         res.status(500).json({error: 'Ошибка сервера'});
@@ -31,7 +32,7 @@ const updateRole = async (req, res) => {
 
         res.status(200).json({
             message: 'Роль обновлена',
-            user
+            user: toAdminResponse(user)
         });
     } catch (error) {
         console.error('Update role error: ', error);

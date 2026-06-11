@@ -9,6 +9,10 @@ const categoryService = {
         return await categoryRepository.getCategoryStats(userId);
     },
 
+    async getCategoryById(id) {
+        return await categoryRepository.getCategoryById(id);
+    },
+
     async createCategory(userId, name, type, icon) {
         if (!name || name.trim() === '') {
             throw new Error('Название категории обязательно!');

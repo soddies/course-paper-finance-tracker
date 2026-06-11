@@ -193,8 +193,8 @@ const Targets = () => {
         fetchTargets();
     }, []);
 
-    const totalSaved = targets.reduce((sum, t) => sum + parseFloat(t.current_amount || 0), 0);
-    const totalTargets = targets.reduce((sum, t) => sum + parseFloat(t.target_amount || 0), 0);
+    const totalSaved = targets.reduce((sum, t) => sum + parseFloat(t.currentAmount|| 0), 0);
+    const totalTargets = targets.reduce((sum, t) => sum + parseFloat(t.targetAmount || 0), 0);
     const overallProcess = totalTargets > 0 ? Math.min((totalSaved / totalTargets) * 100, 100) : 0;
 
     if (loading && targets.length === 0) {

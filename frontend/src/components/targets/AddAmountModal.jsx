@@ -37,7 +37,7 @@ const AddAmountModal = ({target, onClose, onAdd}) => {
                     </div>
 
                     <div className="current-progress-amount">
-                        Текущий прогресс: {parseFloat(target?.current_amount || 0).toLocaleString('ru-RU')} ₽ из {parseFloat(target?.target_amount || 0).toLocaleString('ru-RU')} ₽
+                        Текущий прогресс: {parseFloat(target?.currentAmount || 0).toLocaleString('ru-RU')} ₽ из {parseFloat(target?.targetAmount || 0).toLocaleString('ru-RU')} ₽
                     </div>
 
                     <div className="form-action-amount">

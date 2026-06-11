@@ -74,12 +74,12 @@ const TransactionItem = ({ transaction, onEdit, onDelete }) => {
     return (
         <div className="transaction-item">
             <div className={`cat-icon-box ${isIncome ? 'icon-income' : 'icon-expense'}`}>
-                {getCategoryIcon(transaction.category_name)}
+                {getCategoryIcon(transaction.categoryName)}
             </div>
 
             <div className="trans-info">
-                <h3 className="trans-title">{transaction.category_name || 'Без категории'}</h3>
-                <p className="trans-date">{formatDate(transaction.transaction_date)}</p>
+                <h3 className="trans-title">{transaction.categoryName || 'Без категории'}</h3>
+                <p className="trans-date">{formatDate(transaction.transactionDate)}</p>
                 {transaction.description && (
                     <p className="trans-desc">{transaction.description}</p>
                 )}

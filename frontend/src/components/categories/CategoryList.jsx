@@ -51,12 +51,12 @@ const CategoryItem = ({category, onDelete}) => {
         </div>
         <div className="cat-info">
             <h3>{category.name}</h3>
-            {category.is_system ? 
+            {category.isSystem ? 
                 <span className='badge-system'>Системная</span> : 
                 <span className='badge-system'>Ваша категория</span>
             }
         </div>
-        {!category.is_system && (
+        {!category.isSystem && (
             <button className='btn-delete-small' onClick={() => onDelete(category.id)}>
                 <img src={TrashBasketIcon} alt="" className="system-icon"/>
             </button>

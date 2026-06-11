@@ -1,5 +1,6 @@
 const transactionService = require('../services/transactionService');
-
+const {toTransactionResponse, toTransactionListResponse} = require('../DTO/transactionsDto');
+ 
 const createTransaction = async (req, res) => {
     try {
         const {type, amount, categoryId, description, transactionDate} = req.body;
@@ -9,7 +10,7 @@ const createTransaction = async (req, res) => {
 
         res.status(201).json({
             message: 'Транзакция создана',
-            transaction
+            transaction: toTransactionResponse(transaction)
         });
     } catch (error) {
         console.error('Create transaction error: ', error);
@@ -26,7 +27,7 @@ const getTransactions = async (req, res) => {
 
         res.status(200).json({
             count: transactions.length,
-            transactions
+            transactions: toTransactionListResponse(transactions)
         });
     } catch (error) {
         console.error('Get transaction error: ', error);
@@ -43,7 +44,9 @@ const getTransactionById = async (req, res) => {
         if (!transaction) {
             return res.status(404).json({message: "Транзакция не найдена"});
         }
-        res.status(200).json({transaction});
+        res.status(200).json({
+            transaction: toTransactionResponse(transaction)
+        });
     } catch (error) {
         console.error('Get transactions by ID error: ', error);
         res.status(500).json({message: 'Ошибка сервера'});
@@ -74,7 +77,7 @@ const updateTransaction = async (req, res) => {
 
         res.status(200).json({
             message: 'Транзакция обновлена',
-            transaction
+            transaction: toTransactionResponse(transaction)
         });
     } catch (error) {
         console.error('Update error message: ', error);
@@ -101,7 +104,7 @@ const deleteTransaction = async (req, res) => {
 module.exports = {
     createTransaction,
     getTransactions,
-    getTransactionById, // получение транзакции по id
+    getTransactionById,
     updateTransaction,
     deleteTransaction
 }
