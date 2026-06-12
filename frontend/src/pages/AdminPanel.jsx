@@ -163,7 +163,7 @@ const AdminPanel = () => {
                                         </span>
                                     </td>
                                     <td>
-                                        {new Date(user.created_at).toLocaleDateString('ru-RU')}
+                                        {new Date(user.createdAt).toLocaleDateString('ru-RU')}
                                     </td>
                                     <td className='action-cells'>
                                         {user.role !== 'admin' ? (
