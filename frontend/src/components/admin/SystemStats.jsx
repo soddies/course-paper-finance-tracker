@@ -131,7 +131,7 @@ const SystemStats = () => {
                         <div className="stat-label-admin">Выполненных</div>
                     </div>
                     <div className="stat-card-admin">
-                        <div className="stat-value-admin">{stats.targets.total_saved}</div>
+                        <div className="stat-value-admin">{formatMoney(stats.targets.total_saved)}</div>
                         <div className="stat-label-admin">Всего накоплено</div>
                     </div>
                 </div>
