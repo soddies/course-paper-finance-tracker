@@ -36,8 +36,8 @@ const deleteUser = async (userId, adminId) => {
         throw new Error('Не удалось удалить пользователя');
     }
 
-    return true;
-};
+    return await adminRepository.deleteUser(userId);
+}
 
 const banUser = async (userId, adminId, reason = null) => {
     if (parseInt(userId) === adminId) {
