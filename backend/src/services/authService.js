@@ -29,6 +29,10 @@ const loginUser = async (email, password) => {
         throw new Error('Неверный логин или пароль');
     }
 
+    if (user.is_banned) {
+        throw new Error('Ваша учетная запись заблокирована администратором');
+    }
+
     const isValidPassword = await bcrypt.compare(password, user.password_hash);
     if (!isValidPassword) {
         throw new Error('Неверный Email или пароль');
@@ -41,7 +45,12 @@ const loginUser = async (email, password) => {
     );
 
     return {
-        user: {id: user.id, email: user.email, nickname: user.nickname, role: user.role},
+        user: {
+            id: user.id, 
+            email: user.email, 
+            nickname: user.nickname, 
+            role: user.role
+        },
         token
     };
 };

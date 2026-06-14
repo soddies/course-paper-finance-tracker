@@ -52,6 +52,9 @@ const Enter = () => {
             const data = await response.json();
 
             if (!response.ok) {
+                if (data.error === 'Ваша учетная запись заблокирована администратором') {
+                    throw new Error('Ваша учетная запись заблокирована администратором');
+                }
                 throw new Error(data.error || 'Ошибка входа');
             }
 
