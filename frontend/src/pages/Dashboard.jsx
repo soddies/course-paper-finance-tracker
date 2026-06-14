@@ -137,7 +137,7 @@ const Dashboard = () => {
 
             <main className="dashboard-content">
                 <section className="welcome-section">
-                    <h1 className="welcome-title">Здравствуйте, {user.nickname || user.email.split('@')[0]}</h1>
+                    <h1 className="welcome-title">Здравствуйте, {user.nickname}</h1>
                     <p className="welcome-subtitle">
                         Текущая дата: {new Date().toLocaleDateString('ru-RU')}</p>
                 </section>

@@ -92,7 +92,7 @@ const Auth = () => {
                         name="nickname"
                         value={formData.nickname}
                         onChange={handleChange}
-                        placeholder="Придумайте ник"
+                        placeholder="Как к вам обращаться?"
                         required
                     />
 
