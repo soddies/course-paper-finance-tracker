@@ -6,8 +6,10 @@ const toUserResponse = (user) => {
     return {
         id: user.id,
         email: user.email,
-        nickname: user.nickname || null,
+        nickname: user.nickname,
         role: user.role,
+        isBanned: user.is_banned || false,
+        banReason: user.ban_reason || null,
         createdAt: user.created_at
     };
 };
@@ -28,8 +30,11 @@ const toAdminResponse = (user) => {
     return {
         id: user.id,
         email: user.email,
-        nickname: user.nickname || null,
+        nickname: user.nickname,
         role: user.role,
+        isBanned: user.is_banned || false,
+        banReason: user.ban_reason || null,
+        bannedAt: user.banned_at || null,
         createdAt: user.created_at
     };
 };

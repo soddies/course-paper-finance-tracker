@@ -84,6 +84,8 @@
     font-size: 13px;
     cursor: pointer;
     transition: all 0.2s;
+    width: 120px;
+    text-align: center;
 }
 
 .btn-promote {
@@ -98,7 +100,6 @@
 .btn-demote {
     background-color: #4A5C6A; 
     color: #e6eff5;
-    width: 50%;
 }
 
 .btn-demote:hover {
@@ -138,5 +139,166 @@
     background: #11212D; 
     color: #ffffff;
     border: none;
+}
+
+.system-stats {
+    padding: 20px 0;
+}
+
+.stats-section {
+    margin-bottom: 40px;
+}
+
+.stat-section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #11212D;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e5e7ed;
+}
+
+.stat-grid-admin {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.stat-card-admin {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    text-align: center;
+    transition: transform 0.2s;
+    border: 1px solid #e5e7eb;
+}
+
+.stat-card-admin:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.stat-value-admin {
+    font-size: 32px;
+    font-weight: 700;
+    color: #11212D;
+    margin-bottom: 8px;
+}
+
+.stat-label-admin {
+    font-size: 14px;
+    color: #9BA8AB;
+    font-weight: 500;
+}
+
+.stat-value-income {
+    font-size: 32px;
+    font-weight: 700;
+    color: #11212D;
+    margin-bottom: 8px;
+}
+
+.stat-label-income {
+    font-size: 14px;
+    color: #9BA8AB;
+    font-weight: 500;
+}
+
+.stat-value-expense  {
+    font-size: 32px;
+    font-weight: 700;
+    color: #11212D;
+    margin-bottom: 8px;
+}
+
+.stat-label-expense {
+    font-size: 14px;
+    color: #9BA8AB;
+    font-weight: 500;
+}
+
+.btn-retry {
+    margin-left: 10px;
+    padding: 6px 12px;
+    background: #11212D;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.btn-retry:hover {
+    background: #2d3841; 
+}
+
+.admin-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 0;
+}
+
+.admin-tab {
+    padding: 12px 24px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-size: 15px;
+    font-weight: 500;
+    color: #9BA8AB;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: -2px;
+}
+
+.admin-tab:hover {
+    color: #11212D;
+    background: #d4d4d4;
+    border-radius: 8px 8px 0 0;
+}
+
+.admin-tab.active {
+    color: #11212D;
+    border-bottom-color: #11212D;
+    font-weight: 600;
+}
+
+.banned-row {
+    background-color: #fef2f2;
+}
+
+.banned-row:hover {
+    background-color: #fee2e2;
+}
+
+.banned-badge {
+    margin-left: 6px;
+    font-size: 12px;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 6px;
+}
+
+.btn-ban {
+    background-color: #4A5C6A; 
+    color: #e6eff5;
+}
+
+.btn-unban {
+    background-color: #4A5C6A; 
+    color: #e6eff5;
+}
+
+.btn-unban:hover {
+    background-color: #2d3841;
 }
 
