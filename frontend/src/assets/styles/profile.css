@@ -216,7 +216,7 @@
 .modal-overlay-profile {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(6, 20, 27, 0.6);
+    background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
@@ -241,7 +241,7 @@
     padding: 30px;
     max-width: 480px;
     width: 100%;
-    box-shadow: 0 20px 60px rgba(6, 20, 27, 0.3);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     animation: slideUp 0.3s ease;
 }
 
