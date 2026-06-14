@@ -122,8 +122,11 @@ const getUserTransactions = async (userId, filters = {}) => {
 
 const getTransactionById = async (transactionId, userId) => {
     const result = await pool.query(
-        `select t.*, t.target_id
-        from transactions t
+        `select t.id, t.type, t.amount, t.description, t.transaction_date, 
+        t.category_id, t.target_id, c.name as category_name, 
+        c.icon as category_icon, tg.name as target_name from transactions t
+        left join categories c on t.category_id = c.id
+        left join targets tg on t.target_id = tg.id
         where t.id = $1 and t.user_id = $2`, [transactionId, userId]
     );
     return result.rows[0];   
