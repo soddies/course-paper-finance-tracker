@@ -49,7 +49,6 @@
 ### 1. Клонируем репозиторий
 ```bash
 git clone https://github.com/soddies/course-paper-finance-tracker.git
-cd course-paper-finance-tracker
 ```
 ### 2. Установка зависимостей
 ```bash
