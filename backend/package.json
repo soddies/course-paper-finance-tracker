@@ -5,6 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/app.js",
+    "migrate": "node-pg-migrate up",
+    "migrate:down": "node-pg-migrate down",
+    "migrate:create": "node-pg-migrate create",
     "dev": "nodemon src/app.js"
   },
   "keywords": [],
@@ -17,6 +20,7 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
+    "node-pg-migrate": "^6.2.2",
     "pdfkit": "^0.18.0",
     "pg": "^8.20.0",
     "swagger-jsdoc": "^6.2.8",

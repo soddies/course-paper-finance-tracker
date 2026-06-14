@@ -7,7 +7,10 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+      "start": "node app.js",
+      "migrate": "node-pg-migrate up",
+      "migrate:down": "node-pg-migrate down",
+      "migrate:create": "node-pg-migrate create"
   },
   "dependencies": {
     "react-router-dom": "^7.15.0"

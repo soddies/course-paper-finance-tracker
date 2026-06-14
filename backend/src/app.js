@@ -1,6 +1,11 @@
+require('dotenv').config({ 
+    path: __dirname + '/../.env' 
+});
 const express = require('express');
 const cors = require('cors');
-const authRouter = require('./routers/authRoutes')
+const { execSync } = require('child_process');
+
+const authRouter = require('./routers/authRoutes');
 const transactionRoutes = require('./routers/transactionRoutes');
 const categoryRoutes = require('./routers/categoryRoutes');
 const analyticsRouter = require('./routers/analyticsRoutes');
@@ -9,8 +14,6 @@ const exportRouter = require('./routers/exportsRoutes');
 const targetsRouter = require('./routers/targetsRoutes');
 const profileRouter = require('./routers/profileRoutes');
 const adminRouter = require('./routers/adminRoutes');
-
-require('dotenv').config();
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger');
@@ -34,11 +37,37 @@ app.use('/api/admin', adminRouter);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get('/health', (req, res) => {
-    res.json({status: 'OK'});
+    res.json({ status: 'OK' });
 });
 
-app.listen(PORT, () => {
-    console.log(`Сервер запущен на порте ${PORT}`);
-});
+const runMigration = () => {
+    try {
+        console.log('Применение миграций БД...');
+        
+        execSync('npx node-pg-migrate up', {
+            cwd: __dirname + '/..',  
+            stdio: 'inherit',     
+            env: {
+                ...process.env,
+                DATABASE_URL: `postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`
+            }
+        });
+        
+        console.log('Миграции успешно применены');
+    } catch (error) {
+        console.error('Ошибка миграций:', error.message);
+        process.exit(1);
+    }
+};
+
+const startServer = async () => {
+    runMigration();
+    
+    app.listen(PORT, () => {
+        console.log(`Сервер запущен на порте ${PORT}`);
+    });
+};
+
+startServer();
 
 module.exports = app;
