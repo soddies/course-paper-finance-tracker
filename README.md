@@ -7,6 +7,7 @@
 ### Frontend
 - React + Vite (UI)
 - CSS (стилизация)
+- Chart.js (график)
 
 ### Backend
 - Node.js + Express (сервер)
