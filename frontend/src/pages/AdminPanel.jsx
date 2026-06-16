@@ -248,9 +248,11 @@ const AdminPanel = () => {
                                                         </button>
                                                     )}
                                                     {user.role !== 'admin' ? (
+                                                        user.isBanned ? null : (
                                                         <button className='btn-action-admin btn-promote' onClick={() => handleRoleChange(user.id, 'admin')}>
                                                             В админы
                                                         </button>
+                                                        )
                                                     ) : (
                                                         <button className='btn-action-admin btn-demote' onClick={() => handleRoleChange(user.id, 'user')}>
                                                             Понизить

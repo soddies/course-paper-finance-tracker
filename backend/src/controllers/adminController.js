@@ -1,4 +1,4 @@
-const { toAdminResponse, toUsersListResponse, toUserResponse } = require('../DTO/userDto');
+const { toAdminResponse, toUsersListResponse } = require('../DTO/userDto');
 const adminService = require('../services/adminService');
 
 const getAllUsers = async (req, res) => {
