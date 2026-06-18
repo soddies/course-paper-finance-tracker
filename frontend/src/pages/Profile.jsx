@@ -16,6 +16,7 @@ const Profile = () => {
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
     const [modalType, setModalType] = useState(null);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         fetchUserData();
@@ -66,6 +67,13 @@ const Profile = () => {
     const handleModalSave = (updatedData) => {
         if (updatedData?.email) {
             setUserData(prev => ({...prev, email: updatedData.email}));
+
+            const userStr = localStorage.getItem('user');
+            if (userStr) {
+                const user = JSON.parse(userStr);
+                user.email = updatedData.email;
+                localStorage.setItem('user', JSON.stringify(user));
+            }
         }
         if (updatedData?.nickname) {
         setUserData(prev => ({ ...prev, nickname: updatedData.nickname }));
