@@ -22,7 +22,7 @@ const authenticateToken = async (req, res, next) => {
         }
 
         if (user.is_banned) {
-            return res.sttaus(403).json({
+            return res.status(403).json({
                 error: 'Ваша учетная запись заблокирована администратором',
                 reason: user.ban_reason
             });
