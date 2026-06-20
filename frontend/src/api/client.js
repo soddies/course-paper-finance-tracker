@@ -22,22 +22,18 @@ export const apiClient = async (endpoint, options = {}) => {
             try {
                 errorData = await response.json();
             } catch (e) {
-                // Важно: бросаем Error, а не просто строку или null
                 throw new Error(`Ошибка сети: ${response.status}`);
             }
 
             const errorMessage = errorData?.error || errorData?.message || `Ошибка ${response.status}`;
             
-            // Создаем объект ошибки
             const error = new Error(errorMessage);
             error.status = response.status;
             
-            // Пробрасываем details, если они есть
             if (errorData?.details) {
                 error.details = errorData.details;
             }
             
-            // Бросаем ОБЪЕКТ
             throw error; 
         }
 
