@@ -3,17 +3,18 @@ import {useNavigate} from 'react-router-dom';
 import Header from '../components/layout/Header';
 import {useAuth} from '../hooks/useAuth';
 import SystemStats from '../components/admin/SystemStats';
+import {adminAPI} from '../api/admin';
 import '../assets/styles/admin.css';
 
 const AdminPanel = () => {
     const navigate = useNavigate();
     const {isAdmin, isLoading} = useAuth();
-
     const [activeTab, setActiveTab] = useState('stats');
-
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [fetchError, setFetchError] = useState('');
+    const [actionError, setActionError] = useState(''); 
 
     useEffect(() => {
         if (isLoading) {
@@ -29,23 +30,12 @@ const AdminPanel = () => {
     const fetchUsers = async () => {
         try {
             setLoading(true);
-            setError('');
-
-            const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:3000/api/admin/users', {
-                headers: {
-                    'Authorization': `Bearer ${token}`  
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Ошибка загрузки пользователей');
-            }
-
-            const data = await response.json();
+            setFetchError('');
+            setActionError('');
+            const data = await adminAPI.getUsers();
             setUsers(data);
         } catch (err) {
-            setError(err.message);
+            setFetchError(err.message);
         } finally {
             setLoading(false);
         }
@@ -55,27 +45,11 @@ const AdminPanel = () => {
         if (!window.confirm(`Изменить роль пользователя на ${newRole}?`)) {
             return;
         }
-
         try {
-            const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:3000/api/admin/users/${userId}/role`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({role: newRole})
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error || 'Ошибка изменения роли');
-            }
-
+            await adminAPI.changeRoleUser(userId, newRole);
             await fetchUsers();
         } catch (err) {
-            setError(err.message);
-            throw err;
+            setActionError(err.message);
         }
     };
 
@@ -89,24 +63,10 @@ const AdminPanel = () => {
         }
 
         try {
-            const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:3000/api/admin/users/${userId}/ban`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ reason: reason || null })
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error || 'Ошибка блокировки');
-            }
-
+            await adminAPI.banUser(userId, reason);
             await fetchUsers();
         } catch (err) {
-            setError(err.message);
+            setActionError(err.message);
         }
     };
 
@@ -116,22 +76,10 @@ const AdminPanel = () => {
         }
 
         try {
-            const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:3000/api/admin/users/${userId}/unban`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error || 'Ошибка разблокировки');
-            }
-
+            await adminAPI.unBanUser(userId);
             await fetchUsers();
         } catch (err) {
-            setError(err.message);
+            setActionError(err.message);
         }
     };
 
@@ -141,23 +89,10 @@ const AdminPanel = () => {
         }
 
         try {
-            const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:3000/api/admin/users/${userId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error || 'Ошибка удаления');
-            }
-
+            await adminAPI.deleteUser(userId);
             await fetchUsers();
         } catch (err) {
-            setError(err.message);
-            throw err;
+            setActionError(err.message);
         }
     };
 
@@ -181,12 +116,6 @@ const AdminPanel = () => {
                     <p className="admin-subtitle">Управление системой</p>
                 </div>
 
-                {error && (
-                    <div className="alert alert-error">
-                        {error}
-                    </div>
-                )}
-
                 <div className="admin-tabs">
                     <button className={`admin-tab ${activeTab === 'stats' ? 'active' : ''}`} onClick={() => setActiveTab('stats')}>
                         Статистика
@@ -196,13 +125,24 @@ const AdminPanel = () => {
                     </button>
                 </div>
 
+                {actionError && (
+                    <div className="alert alert-error">
+                        {actionError}
+                    </div>
+                )}
+
                 {activeTab === 'stats' && <SystemStats/>}
 
                 {activeTab === 'users' && (
                     <>
                         {loading ? (
-                            <div className="admin-loading">
-                                <p>Загрузка пользователей...</p>
+                            <div className="stats-empty-state">
+                                <p className='empty-state-text'>Загрузка пользователей...</p>
+                            </div>
+                        ) : fetchError ? (
+                            <div className='stats-empty-state'>
+                                <p className="empty-state-text">{fetchError}</p>
+                                <button onClick={fetchUsers} className='btn-retry-centered'>Повторить</button>
                             </div>
                         ) : (
                             <div className="users-table-container">
@@ -223,7 +163,7 @@ const AdminPanel = () => {
                                                 <td>{user.id}</td>
                                                 <td>{user.email}
                                                     {user.isBanned && (
-                                                        <span className="banned-badge" title={user.ban_reason || 'Заблокирован'}>
+                                                        <span className="banned-badge" title={user.banReason || 'Заблокирован'}>
                                                             ✕
                                                         </span>
                                                     )}

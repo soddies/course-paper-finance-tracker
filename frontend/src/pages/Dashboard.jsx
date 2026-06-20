@@ -4,6 +4,7 @@ import Header from '../components/layout/Header';
 import BalanceCard from '../components/dashboard/BalanceCard';
 import StatsCards from '../components/dashboard/StatsCard';
 import TransactionModal from '../components/transaction/TransactionModal';
+import {dashboardAPI} from '../api/dashboard';
 import '../assets/styles/dashboard.css';
 
 const Dashboard = () => {
@@ -29,26 +30,8 @@ const Dashboard = () => {
         try {
             setLoading(true);
             setError('');
-
-            const token = localStorage.getItem('token');
-            if (!token) {
-                throw new Error('Нет токена авторизации');
-            }
-
-            const response = await fetch('http://localhost:3000/api/dashboard/summary', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error || 'Ошибка загрузки');
-            }
-
-            const data = await response.json();
+            const data = await dashboardAPI.getSummary();
             setDashboardData(data);
-            
         } catch (err) {
             console.error('Dashboard fetch error: ', err);
             setError(err.message);

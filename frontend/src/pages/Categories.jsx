@@ -3,6 +3,7 @@ import Header from '../components/layout/Header';
 import CategoryModal from '../components/categories/CategoryModal';
 import CategoryList from '../components/categories/CategoryList';
 import '../assets/styles/categories.css';
+import { categoryAPI } from '../api/categories';
 
 const Categories = () => {
     const [activeTab, setActiveTab] = useState('income');
@@ -16,16 +17,8 @@ const Categories = () => {
         try {
             setLoading(true);
             setError('');
-
-            const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:3000/api/categories?type=${activeTab}`, {
-                headers: {'Authorization': `Bearer ${token}`}
-            });
-
-            const data = await response.json();
-            if (response.ok) {
-                setCategories(data.categories);
-            }
+            const data = await categoryAPI.getType(activeTab);
+            setCategories(data);
         } catch (err) {
             console.error(err);
             setError(err.message);
@@ -36,17 +29,8 @@ const Categories = () => {
 
     const fetchStats = async () => {
         try {
-            const token = localStorage.getItem('token');
-            if (!token) return;
-
-            const response = await fetch('http://localhost:3000/api/categories/stats', {
-                headers: {'Authorization': `Bearer ${token}`}
-            });
-
-            const data = await response.json();
-            if (response.ok) {
-                setStats(data.stats);
-            }
+            const data = await categoryAPI.getStats();
+            setStats(data);
         } catch(err) {
             console.error('Ошибка загрузки статистики: ', err);
         }
@@ -58,26 +42,11 @@ const Categories = () => {
         }
 
         try {
-            const token = localStorage.getItem('token');
-            if (!token) return;
-
-            const response = await fetch(`http://localhost:3000/api/categories/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error || 'Ошибка удаления категории');
-            };
-
+            await categoryAPI.deleteCategory(id);
             await Promise.all([fetchCategories(), fetchStats()]);
         } catch (err) {
             console.error('Ошибка удаления: ', err);
             setError(err.message);
-            throw err;
         }
     };
 

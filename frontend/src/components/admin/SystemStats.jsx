@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import { adminAPI } from '../../api/admin';
 import '../../assets/styles/admin.css';
 
 const SystemStats = () => {
@@ -14,19 +15,7 @@ const SystemStats = () => {
         try {
             setLoading(true);
             setError('');
-
-            const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:3000/api/admin/stats`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Ошибка загрузки статистики');
-            }
-
-            const data = await response.json();
+            const data = await adminAPI.getStatsAdmin();
             setStats(data);
         } catch (err) {
             setError(err.message);
@@ -37,9 +26,17 @@ const SystemStats = () => {
 
     if (loading) {
         return (
-            <div className="alert alert-error">
-                {error}
-                <button onClick={fetchStats} className='btn-retry'>Повторить</button>
+            <div className="stats-empty-state">
+                <p className='empty-state-text'>Загрузка...</p>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="stats-empty-state">
+                <p className='empty-state-text'>{error}</p>
+                <button onClick={fetchStats} className="btn-retry-centered">Повторить</button>
             </div>
         );
     }

@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import searchIcon from '../../assets/images/transaction_icon/search.svg'
+import { categoriesFilterAPI } from '../../api/categories';
 
 const FilterPanel = ({onFilterChange}) => {
 
@@ -20,19 +21,8 @@ const FilterPanel = ({onFilterChange}) => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const token = localStorage.getItem('token');
-                if (!token) return;
-
-                const response = await fetch('http://localhost:3000/api/categories/filters', {
-                    headers: {
-                        'Authorization' : `Bearer ${token}`
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    setCategories(data.categories || []);
-                }
+                const data = await categoriesFilterAPI.getFilterCategories();
+                setCategories(data);
             } catch (err) {
                 console.error('Ошибка загрузки категорий: ', err);
             }
@@ -56,15 +46,6 @@ const FilterPanel = ({onFilterChange}) => {
     };
 
     const handleReset = () => {
-        setFilters({
-            search: '',
-            type: 'all',
-            categoryId: 'all',
-            dateFrom: '',
-            dateTo: '',
-            sortBy: 'date',
-            sortOrder: 'desc'
-        });
         setFilters(defaultFilters);
         if (onFilterChange) {
             onFilterChange({});

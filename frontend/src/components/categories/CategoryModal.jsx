@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useProfanityCheck } from '../../hooks/useProfanityCheck';
+import { categoryAPI } from '../../api/categories/categoriesApi';
 
 const CategoryModal = ({ isOpen, onClose, defaultType, onCategoryAdded }) => {
     const { profanityError, checkText, clearError } = useProfanityCheck();
@@ -35,23 +36,7 @@ const CategoryModal = ({ isOpen, onClose, defaultType, onCategoryAdded }) => {
         setLoading(true);
 
         try {
-            const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:3000/api/categories', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ name: name.trim(), type })
-            });
-
-            const data = await response.json();
-            
-            if (!response.ok) {
-                const errorMessage = data.details?.[0]?.message || data.error || 'Ошибка создания';
-                throw new Error(errorMessage);
-            }
-
+            await categoryAPI.createCategory(name.trim(), type);
             onCategoryAdded();
             setName('');
             onClose(); 

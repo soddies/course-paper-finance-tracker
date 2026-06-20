@@ -7,6 +7,7 @@ import bagMoneyIcon from '../assets/images/category_icon/default/bag-with-money.
 import analyzeIcon from '../assets/images/dashboard_icon/diagram.svg';
 import {Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend} from 'chart.js';
 import {Bar} from 'react-chartjs-2';
+import { analyticsAPI } from '../api/analytics';
 
 ChartJS.register(
     CategoryScale,
@@ -48,26 +49,9 @@ const Analytics = () => {
 
     const fetchAnalytics = async () => {
         try {
-            const token = localStorage.getItem('token');
-            if (!token) return;
-
-            const params = new URLSearchParams({
-                period, 
-                month: selectedMonth,
-                year: selectedYear
-            });
-
-            const response = await fetch(`http://localhost:3000/api/analytics?${params}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Ошибка загрузки аналитики');
-            }
-
-            const data = await response.json();
+            setLoading(true);
+            setError('');
+            const data = await analyticsAPI.getAnalytics(period, selectedMonth, selectedYear);
             setAnalyticsData(data);
         } catch (err) {
             console.error('Ошибка загрузки аналитики: ', err);

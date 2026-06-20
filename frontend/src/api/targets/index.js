@@ -1,0 +1,1 @@
+export {targetsAPI} from './targetsApi';

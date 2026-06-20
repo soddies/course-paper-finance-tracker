@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useProfanityCheck } from '../../hooks/useProfanityCheck';
+import { categoriesFilterAPI } from '../../api/categories/categoriesFilterApi';
+import { transactionAPI } from '../../api/transactions';
 
 const TransactionModal = ({ isOpen, onClose, type, transaction, onTransactionUpdate }) => {
     const isEditing = !!transaction;
@@ -31,17 +33,8 @@ const TransactionModal = ({ isOpen, onClose, type, transaction, onTransactionUpd
 
         const fetchCategories = async () => {
             try {
-                const token = localStorage.getItem('token');
-                if (!token) return;
-
-                const response = await fetch(`http://localhost:3000/api/categories?type=${type}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-
-                const data = await response.json();
-                if (response.ok) {
-                    setCategories(data.categories || []);
-                }
+                const data = await categoriesFilterAPI.getTypeCategories(type);
+                setCategories(data);
             } catch (err) {
                 console.error('Ошибка загрузки категорий: ', err);
             } finally {
@@ -99,11 +92,6 @@ const TransactionModal = ({ isOpen, onClose, type, transaction, onTransactionUpd
         setLoading(true);
 
         try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                throw new Error('Вы не авторизованы');
-            }
-
             const payload = {
                 type: type,
                 amount: parseFloat(formData.amount),
@@ -112,28 +100,10 @@ const TransactionModal = ({ isOpen, onClose, type, transaction, onTransactionUpd
                 transactionDate: new Date(formData.date).toISOString()
             };
 
-            let url = 'http://localhost:3000/api/transactions';
-            let method = 'POST';
-
             if (isEditing) {
-                url = `http://localhost:3000/api/transactions/${transaction.id}`;
-                method = 'PUT';
-            }
-
-            const response = await fetch(url, {
-                method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(payload)
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                const errorMessage = data.details?.[0]?.message || data.error || 'Ошибка при сохранении';
-                throw new Error(errorMessage);
+                await transactionAPI.updateTransaction(transaction.id, payload);
+            } else {
+                await transactionAPI.createTransaction(payload);
             }
 
             if (onTransactionUpdate) {

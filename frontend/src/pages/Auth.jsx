@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import InputField from '../components/ui/InputField';
 import Button from '../components/ui/Button';
 import { Link } from 'react-router-dom';
+import { registerUser } from '../api/auth-enter';
 import '../assets/styles/auth.css'; 
 
 const Auth = () => {
@@ -42,24 +43,11 @@ const Auth = () => {
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:3000/api/auth/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: formData.email,
-                    nickname: formData.nickname,
-                    password: formData.password
-                })
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error || 'Ошибка регистрации');
-            }
-
+            await registerUser(
+                formData.email,
+                formData.password,
+                formData.nickname
+            );
             navigate('/enter', {state: {email: formData.email}});
         } catch(err) {
             setError(err.message);

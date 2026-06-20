@@ -3,6 +3,7 @@ import Header from "../components/layout/Header";
 import TargetModal from '../components/targets/TargetModal';
 import TargetList from '../components/targets/TargetList';
 import AddAmountModal from '../components/targets/AddAmountModal';
+import { targetsAPI } from '../api/targets';
 import '../assets/styles/targets.css'
 
 const Targets = () => {
@@ -18,23 +19,8 @@ const Targets = () => {
         try {
             setLoading(true);
             setError('');
-
-            const token = localStorage.getItem('token');
-
-            const response = await fetch('http://localhost:3000/api/targets', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                setTargets(data);
-            } else {
-                const errorMessage = data.details?.[0]?.message || data.error || 'Ошибка загрузки';
-                throw new Error(errorMessage);
-            }
+            const data = await targetsAPI.getTargets();
+            setTargets(data);
         } catch (err) {
             console.error('Fetch target error: ', err);
             setError(err.message);
@@ -45,23 +31,7 @@ const Targets = () => {
 
     const handleCreateTarget = async (_, targetData) => {
         try {
-            const token = localStorage.getItem('token');
-
-            const response = await fetch('http://localhost:3000/api/targets', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(targetData)
-            });
-
-            const data = await response.json();
-            if (!response.ok) {
-                const errorMessage = data.details?.[0]?.message || data.error || 'Ошибка создания';
-                throw new Error(errorMessage);
-            }
-
+            await targetsAPI.createTarget(targetData);
             await fetchTargets();
             setIsModalOpen(false);
             setEditingTarget(null);
@@ -74,24 +44,7 @@ const Targets = () => {
 
     const handleUpdateTarget = async (targetId, targetData) => {
         try {
-            const token = localStorage.getItem('token');
-
-            const id = parseInt(targetId);
-            const response = await fetch(`http://localhost:3000/api/targets/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(targetData)
-            });
-
-            const data = await response.json();
-            if (!response.ok) {
-                const errorMessage = data.details?.[0]?.message || data.error || 'Ошибка обновления';
-                throw new Error(errorMessage);
-            }
-
+            await targetsAPI.updateTarget(targetId, targetData);
             await fetchTargets();
             setIsModalOpen(false);
             setEditingTarget(null);
@@ -106,86 +59,35 @@ const Targets = () => {
         if (!window.confirm('Удалить эту цель?')) {
             return;
         }
-
         try {
-            const token = localStorage.getItem('token');
-
-            const id = parseInt(targetId)
-            const response = await fetch(`http://localhost:3000/api/targets/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            const data = await response.json();
-            if (!response.ok) {
-                const errorMessage = data.details?.[0]?.message || data.error || 'Ошибка удаления';
-                throw new Error(errorMessage);
-            }
+            await targetsAPI.deleteTarget(targetId);
             await fetchTargets();
         } catch (err) {
             console.error('Delete target error: ', err);
             setError(err.message); 
-            throw err;
         }
     };
 
     const handleAddAmount = async (targetId, amount) => {
         try {
-            const token = localStorage.getItem('token');
-
-            const id = parseInt(targetId);
-            const response = await fetch(`http://localhost:3000/api/targets/${id}/add`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({amount})
-            });
-
-            const data = await response.json();
-            if (!response.ok) {
-                const errorMessage = data.details?.[0]?.message || data.error || 'Ошибка пополнения';
-                throw new Error(errorMessage);
-            }
+            await targetsAPI.addAmount(targetId, amount);
             await fetchTargets();
             setIsAddModal(false);
             setAddingTarget(null);
         } catch (err) {
             console.error('Add amount error: ', err);
             setError(err.message);
-            throw err;
         }
     };
 
     const handleTogglePause = async (target) => {
         try {
-            const token = localStorage.getItem('token');
             const newStatus = target.status === 'paused' ? 'active' : 'paused';
-
-            const response = await fetch(`http://localhost:3000/api/targets/${target.id}/toggle-pause`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-
-                body: JSON.stringify({status: newStatus})
-            });
-
-            const data = await response.json();
-            if (!response.ok) {
-                const errorMessage = data.details?.[0]?.message || data.error || 'Ошибка смены статуса';
-                throw new Error(errorMessage);
-            }
-
+            await targetsAPI.togglePause(target.id, newStatus);
             await fetchTargets();
         } catch (err) {
             console.error('Toggle status error: ', err);
             setError(err.message);
-            throw err;
         } 
     };
 

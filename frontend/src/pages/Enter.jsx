@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import InputField from '../components/ui/InputField';
 import Button from '../components/ui/Button';
 import '../assets/styles/auth.css';
+import { loginUser } from '../api/auth-enter';
 
 const Enter = () => {
     const navigate = useNavigate();
@@ -41,22 +42,7 @@ const Enter = () => {
         setLoading(true);
         
         try {
-            const response = await fetch('http://localhost:3000/api/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                if (data.error === 'Ваша учетная запись заблокирована администратором') {
-                    throw new Error('Ваша учетная запись заблокирована администратором');
-                }
-                throw new Error(data.error || 'Ошибка входа');
-            }
+            const data = await loginUser(formData.email, formData.password);
 
             localStorage.setItem('token', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
@@ -64,6 +50,8 @@ const Enter = () => {
             navigate('/dashboard');
         } catch (err) {
             setError(err.message);
+        } finally {
+            setLoading(false);
         }
     };
 

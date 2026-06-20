@@ -10,6 +10,7 @@ import expenseIcon from '../assets/images/profile_icon/expense.svg';
 import incomeIcon from '../assets/images/profile_icon/income.svg';
 import overdueIcon from '../assets/images/profile_icon/overdue.svg';
 import targetIcon from '../assets/images/targets_icon/target.svg';
+import { profileAPI } from '../api/profile';
 
 const Profile = () => {
     const [userData, setUserData] = useState(null);
@@ -25,17 +26,8 @@ const Profile = () => {
 
     const fetchUserData = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:3000/api/auth/me', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                setUserData(data);
-            }
+            const data = await profileAPI.getMe();
+            setUserData(data);
         } catch (err) {
             console.error('Error fetching user data: ', err);
         } finally {
@@ -45,17 +37,8 @@ const Profile = () => {
 
     const fetchUserStats = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:3000/api/profile/stats', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                setStats(data);
-            }
+            const data = await profileAPI.getStatsProfile();
+            setStats(data);
         } catch (err) {
             console.error('Error fetching stats: ', err);
             setError('Ошибка загрузки статистики');

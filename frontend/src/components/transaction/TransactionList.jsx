@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import TransactionModal from './TransactionModal';
 import TransactionItem from './TransactionItem';
+import { transactionAPI } from '../../api/transactions/transactionsApi';
 
 const TransactionList = ({ filters = {}, refreshTrigger, setLoading }) => {
     const [transactions, setTransactions] = useState([]);
@@ -16,57 +17,8 @@ const TransactionList = ({ filters = {}, refreshTrigger, setLoading }) => {
     const fetchTransactions = async () => {
         try {
             setIsLoading(true);
-            const token = localStorage.getItem('token');
-            if (!token) {
-                throw new Error('Нет токена авторизации');
-            }
-
-            const queryParams = new URLSearchParams();
-            if (filters.type && filters.type !== 'all') {
-                queryParams.append('type', filters.type);
-            }
-            
-            if (filters.categoryId && filters.categoryId !== 'all') {
-                queryParams.append('categoryId', filters.categoryId);
-            } 
-
-            if (filters.search) {
-                queryParams.append('search', filters.search);
-            }
-
-            if (filters.dateFrom) {
-                queryParams.append('dateFrom', filters.dateFrom);
-            }
-
-            if (filters.dateTo) {
-                queryParams.append('dateTo', filters.dateTo);
-            }
-
-            if (filters.sortBy) {
-                queryParams.append('sortBy', filters.sortBy);
-            }
-
-            if (filters.sortOrder) {
-                queryParams.append('sortOrder', filters.sortOrder);
-            }
-
-            const response = await fetch(
-                `http://localhost:3000/api/transactions?${queryParams}`,
-                {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                }
-            );
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error || 'Ошибка загрузки');
-            }
-
-            const transactionsArray = Array.isArray(data) ? data : (data.transactions || []);
-            setTransactions(transactionsArray);
+            const data = await transactionAPI.getTransactions(filters);
+            setTransactions(data);
             setError('');
         } catch (err) {
             setError(err.message);
@@ -84,19 +36,7 @@ const TransactionList = ({ filters = {}, refreshTrigger, setLoading }) => {
         }
 
         try {
-            const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:3000/api/transactions/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error || 'Ошибка удаления');
-            }
-
+            await transactionAPI.deleteTransaction(id);
             setTransactions(prev => prev.filter(t => t.id !== id));
         } catch (err) {
             console.error(err);

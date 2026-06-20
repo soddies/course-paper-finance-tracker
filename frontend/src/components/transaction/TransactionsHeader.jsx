@@ -2,53 +2,14 @@ import React, { useState } from 'react'
 import exportIcon from '../../assets/images/transaction_icon/export.svg'
 import csvIcon from '../../assets/images/transaction_icon/file-csv.svg'
 import pdfIcon from '../../assets/images/transaction_icon/file-pdf.svg'    
+import { transactionAPI } from '../../api/transactions';
 
 const TransactionHeader = ({filters = {}}) => {
     const [isOpen, setOpen] = useState(false);
 
     const handleExport = async (format) => {
         try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                throw new Error('Нет токена');
-            }
-
-            const params = new URLSearchParams();
-            if (filters.search) {
-                params.append('search', filters.search);
-            }
-            if (filters.type) {
-                params.append('type', filters.type);
-            }
-            if (filters.categoryId) {
-                params.append('categoryId', filters.categoryId);
-            }
-            if (filters.dateFrom) {
-                params.append('dateFrom', filters.dateFrom);
-            }
-            if (filters.dateTo) {
-                params.append('dateTo', filters.dateTo);
-            }
-            if (filters.sortBy) {
-                params.append('sortBy', filters.sortBy);
-            }
-            if (filters.sortOrder) {
-                params.append('sortOrder', filters.sortOrder);
-            }
-
-            const url = `http://localhost:3000/api/export/${format}?${params}`;
-
-            const response = await fetch(url, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Ошибка экспорта');
-            }
-
-            const blob = await response.blob();
+            const blob = await transactionAPI.exportTransaction(format, filters);
             const downloadUrl = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = downloadUrl;
