@@ -12,7 +12,6 @@ const AdminPanel = () => {
     const [activeTab, setActiveTab] = useState('stats');
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
     const [fetchError, setFetchError] = useState('');
     const [actionError, setActionError] = useState(''); 
 
