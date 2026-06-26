@@ -124,4 +124,4 @@ update users set role = 'admin' where email = 'ваш_email@example.com'
 
 ---
 
-### UPD от 26.06.2026: курсовая сдана на ???
+### UPD от 26.06.2026: курсовая сдана на 4
