@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import TransactionModal from './TransactionModal';
 import TransactionItem from './TransactionItem';
-import { transactionAPI } from '../../api/transactions/transactionsApi';
+import { transactionAPI } from '../../api/transactions';
 
 const TransactionList = ({ filters = {}, refreshTrigger, setLoading }) => {
     const [transactions, setTransactions] = useState([]);
