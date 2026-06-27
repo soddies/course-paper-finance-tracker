@@ -18,14 +18,6 @@ const categoryService = {
             throw new Error('Название категории обязательно!');
         }
 
-        const trimmedName = name.trim();
-
-        const existingCategory = categoryRepository.getCategoryByName(trimmedName, userId);
-
-        if (existingCategory) {
-            throw new Error('Категория уже существует!');
-        }
-
         return await categoryRepository.createCategory(userId, name.trim(), type, icon);
     },
 

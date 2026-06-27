@@ -56,13 +56,6 @@ const getSystemCategoryByName = async (name) => {
     return result.rows[0];
 }
 
-const getCategoryByName = async (name, userId) => {
-    const result = await pool.query(
-        `select name from categories where name = $1 and user_id = $2`, [name, userId]
-    );
-    return result.rows[0];
-}
-
 const deleteCategory = async (id) => {
     await pool.query('delete from categories where id = $1', [id]);
 }
